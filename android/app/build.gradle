@@ -228,6 +228,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('your_key_name.keystore')
+            storePassword 'your_key_store_password'
+            keyAlias 'your_key_alias'
+            keyPassword 'your_key_file_alias_password'
+        }
     }
     buildTypes {
         debug {
@@ -239,6 +245,7 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
 
@@ -260,6 +267,8 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     //noinspection GradleDynamicVersion

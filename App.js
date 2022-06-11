@@ -1,25 +1,27 @@
-import React, {useState} from 'react';
+import React from 'react';
+import {Provider} from 'react-native-paper';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {theme} from './src/core/theme';
+import {SingIn, SingUp, ForgotPass, Dashboard} from './src/screens';
 
-import {
-  Text,
-  View,
-  Pressable
-} from 'react-native';
+const Stack = createStackNavigator();
 
-const App = () => {
-  console.log('hola')
-  const [hola, setHola] = useState(true);
+export default function App() {
   return (
-    <View>
-      <Pressable
-        onPress={ () => {
-          setHola(!hola)
-        }}
-      >
-        <Text>Hola como estas</Text>
-      </Pressable>
-    </View>
+    <Provider theme={theme}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="SingIn"
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen name="SingIn" component={SingIn} />
+          <Stack.Screen name="SingUp" component={SingUp} />
+          <Stack.Screen name="Dashboard" component={Dashboard} />
+          <Stack.Screen name="ForgotPass" component={ForgotPass} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
-};
-
-export default App;
+}
