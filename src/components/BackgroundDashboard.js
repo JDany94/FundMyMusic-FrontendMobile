@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
+import { theme } from '../core/theme';
 
 export default function BackgroundDashboard({children}) {
   return <View style={styles.background}>{children}</View>;
@@ -8,6 +9,6 @@ export default function BackgroundDashboard({children}) {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: '#111827',
+    backgroundColor: theme.colors.background,
   },
 });

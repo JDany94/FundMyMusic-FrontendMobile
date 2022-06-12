@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, TextInput} from 'react-native';
+import {Text, Button, Dialog, Portal, ActivityIndicator} from 'react-native-paper';
+
 import Background from '../components/Background';
 import BackButton from '../components/BackButton';
 import Logo from '../components/Logo';
 import Header from '../components/Header';
-import Button from '../components/Button';
 
 export default function ForgotPass({navigation}) {
   const [email, setEmail] = useState('');
@@ -64,5 +65,8 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 25,
+    width: '100%',
+    marginVertical: 10,
+    paddingVertical: 2,
   },
 });

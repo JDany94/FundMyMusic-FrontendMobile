@@ -1,23 +1,57 @@
 import React, {useState} from 'react';
 import {TouchableOpacity, StyleSheet, View, TextInput} from 'react-native';
-import {Text} from 'react-native-paper';
+import {Text, Button, Dialog, Portal, ActivityIndicator} from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Background from '../components/Background';
 import Logo from '../components/Logo';
-import Button from '../components/Button';
 import {theme} from '../core/theme';
+import axiosClient from '../config/axiosClient';
+import useAuth from '../hooks/useAuth';
 
 export default function SingIn({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [alert, setAlert] = useState(false);
+  const [msgAlert, setMsgAlert] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const {setAuth} = useAuth();
+
+  const handleSubmit = async () => {
     if ((email || password) === '') {
-      //alerta
+      setMsgAlert('Todos los campos son obligatorios');
+      setAlert(true);
       return;
     }
-    setEmail('')
-    setPassword('')
-    navigation.replace('Dashboard');
+
+    // TODO:Validaciones
+
+    try {
+      setLoading(true);
+      const {data} = await axiosClient.post(`/user/auth`, {
+        email,
+        password,
+        from: 'User',
+      });
+      await AsyncStorage.setItem('Token', data.token);
+      setAuth(data);
+
+      setEmail('');
+      setPassword('');
+      setMsgAlert('');
+      setLoading(false);
+      navigation.replace('Dashboard');
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      setMsgAlert(
+        error.response.status !== 0
+          ? error.response.data.msg
+          : 'Error de conexión',
+      );
+      setAlert(true);
+    }
   };
 
   return (
@@ -42,6 +76,7 @@ export default function SingIn({navigation}) {
             secureTextEntry={true}
           />
         </View>
+        {loading && <ActivityIndicator animating={true} />}
         <View style={styles.forgotPassword}>
           <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')}>
             <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
@@ -57,6 +92,17 @@ export default function SingIn({navigation}) {
           </TouchableOpacity>
         </View>
       </View>
+      <Portal>
+        <Dialog
+          style={{backgroundColor: theme.colors.background}}
+          visible={alert}
+          onDismiss={() => setAlert(false)}>
+          <Dialog.Title>{msgAlert}</Dialog.Title>
+          <Dialog.Actions>
+            <Button onPress={() => setAlert(false)}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </Background>
   );
 }
@@ -73,37 +119,39 @@ const styles = StyleSheet.create({
   },
   inputs: {
     width: '100%',
-    marginVertical: 12,
   },
   input: {
-    marginBottom: 15,
     backgroundColor: 'rgba(0,0,0,0.7)',
+    color: theme.colors.text,
+    marginBottom: 15,
     borderRadius: 25,
-    color: '#fff',
     padding: 12,
   },
   forgotPassword: {
     width: '100%',
     alignItems: 'flex-end',
     marginBottom: 24,
+    marginTop: 10,
   },
   button: {
     borderRadius: 25,
+    width: '100%',
+    marginVertical: 10,
+    paddingVertical: 2,
   },
   row: {
     flexDirection: 'row',
     marginTop: 4,
   },
   text: {
-    color: '#fff',
+    textTransform: 'uppercase',
     fontWeight: 'bold',
     fontSize: 14,
-    textTransform: 'uppercase',
   },
   link: {
-    fontWeight: 'bold',
     color: theme.colors.primary,
-    fontSize: 14,
     textTransform: 'uppercase',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });

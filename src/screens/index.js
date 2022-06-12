@@ -1,3 +1,4 @@
+export { default as SplashScreen } from './SplashScreen'
 export { default as SingIn } from './SingIn'
 export { default as SingUp } from './SingUp'
 export { default as ForgotPass } from './ForgotPass'
