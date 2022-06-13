@@ -23,7 +23,7 @@ const BottomNav = ({navigation}) => {
           marginHorizontal: 20,
           borderTopWidth: 0,
         },
-        tabBarActiveTintColor: theme.colors.secondary,
+        tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.gray,
         tabBarShowLabel: false,
       }}

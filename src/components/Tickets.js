@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
-import Header from './Header'
+import Title from './Title'
 import useConcerts from '../hooks/useConcerts';
 
 const Tickets = ({navigation}) => {
@@ -10,7 +10,7 @@ const Tickets = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Header>Tickets</Header>
+      <Title>Tickets</Title>
     </View>
   );
 };

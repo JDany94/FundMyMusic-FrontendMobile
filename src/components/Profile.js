@@ -1,48 +1,69 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
 import {Button, Text} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Header from '../components/Header';
+import Title from '../components/Title';
 import useAuth from '../hooks/useAuth';
 import {theme} from '../core/theme';
 
 const Profile = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [balance, setBalance] = useState('');
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [phone, setPhone] = useState('');
+  const [role, setRole] = useState('');
+
   const {auth, singOutAuth} = useAuth();
+
+  useEffect(() => {
+    setEmail(auth.email);
+    setBalance(auth.balance)
+    setName(auth.name);
+    setSurname(auth.surname);
+    setPhone(auth.phone);
+    setRole(auth.role);
+  }, [auth]);
 
   const handleClose = async () => {
     await AsyncStorage.clear();
     singOutAuth();
     navigation.replace('SingIn');
   };
+  const handleEdit = async () => {
+    navigation.navigate('EditProfile');
+  };
+  const handleAddBalance = async () => {
+    navigation.navigate('AddBalance');
+  };
 
-  //TODO: Agragar salgo a la base de datos (Hacer agregar salgo y modificar perfil)
-  //Arregar que no carga a la primera el tlf y el rol
+  //TODO: Hacer agregar saldo
 
   return (
-    <View style={{flex:1,backgroundColor: theme.colors.background}}>
+    <View style={{flex: 1, backgroundColor: theme.colors.background}}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          <Header>Saldo</Header>
-          <Header style={styles.euros}>20.50 €</Header>
-          <Button style={styles.button} mode="contained" onPress={''}>
+          <Title>Saldo</Title>
+          <Title style={styles.euros}>{balance} €</Title>
+          <Button style={styles.button} mode="contained" onPress={handleAddBalance}>
             Agregar saldo
           </Button>
           <View style={styles.containerProfile}>
-            <Header style={styles.titleView}>Email</Header>
-            <Text style={styles.textView}>{auth.email}</Text>
-            <Header style={styles.titleView}>Nombre y apellidos</Header>
+            <Title style={styles.titleView}>Email</Title>
+            <Text style={styles.textView}>{email}</Text>
+            <Title style={styles.titleView}>Nombre y apellidos</Title>
             <Text style={styles.textView}>
-              {auth.name} {auth.surname}
+              {name} {surname}
             </Text>
-            <Header style={styles.titleView}>Phone</Header>
-            <Text style={styles.textView}>{auth.phone}</Text>
-            <Header style={styles.titleView}>Tipo de perfil</Header>
+            <Title style={styles.titleView}>Phone</Title>
+            <Text style={styles.textView}>{phone}</Text>
+            <Title style={styles.titleView}>Tipo de perfil</Title>
             <Text style={styles.textView}>
-              {auth.role === 'User' ? 'Usuario' : null}
+              {role === 'User' ? 'Usuario' : null}
             </Text>
           </View>
-          <Button style={styles.button} mode="contained" onPress={''}>
+          <Button style={styles.button} mode="contained" onPress={handleEdit}>
             Editar perfil
           </Button>
           <Button style={styles.button} mode="contained" onPress={handleClose}>
@@ -61,8 +82,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     width: '100%',
+    maxWidth: 400,
     alignItems: 'center',
     backgroundColor: theme.colors.background,
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
   button: {
     borderRadius: 25,

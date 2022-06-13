@@ -1,95 +1,71 @@
-import React, {useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-} from 'react-native';
-import {
-  Text,
-  Button,
-  Dialog,
-  Portal,
-  ActivityIndicator,
-} from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, TextInput, ScrollView} from 'react-native';
+import {Button, Dialog, Portal, ActivityIndicator} from 'react-native-paper';
 
-import Background from '../components/Background';
-import Logo from '../components/Logo';
+import BackgroundGray from '../components/BackgroundGray';
+import Title from '../components/Title';
 import BackButton from '../components/BackButton';
 import {theme} from '../core/theme';
-import axiosClient from '../config/axiosClient';
+
 import useAuth from '../hooks/useAuth';
 
-const SingUp = ({navigation}) => {
+const EditProfile = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [rePassword, setRePassword] = useState('');
+  const [phone, setPhone] = useState(0);
   const [alert, setAlert] = useState(false);
   const [msgAlert, setMsgAlert] = useState('');
 
-  const {setAuth, loading, setLoading} = useAuth();
+  const {auth, editProfile, loading, setLoading} = useAuth();
+
+  useEffect(() => {
+    setEmail(auth.email);
+    setName(auth.name);
+    setSurname(auth.surname);
+    setPhone(auth.phone);
+  }, []);
 
   const handleSubmit = async () => {
-    if ([email, name, surname, phone, password, rePassword].includes('')) {
+    if ([name, surname].includes('')) {
       setMsgAlert('Todos los campos son obligatorios');
       setAlert(true);
       return;
     }
 
-    // TODO:Validaciones
+    // TODO:Validaciones y Notificacion bonita
 
-    try {
-      setLoading(true);
-      const JSON = {
-        email,
-        name,
-        surname,
-        phone,
-        password,
-        role: 'User',
-        //sin validar correo
-        confirmed: 'true',
-        token: 'Confirmed',
-      };
-      const {data} = await axiosClient.post(`/user`, JSON);
-      await AsyncStorage.setItem('Token', data.token);
-      setAuth(data);
-
+    const JSON = {
+      _id: auth._id,
+      name,
+      surname,
+      phone,
+    };
+    setLoading(true);
+    if (await editProfile(JSON)) {
+      setLoading(false);
       setEmail('');
       setName('');
       setSurname('');
-      setPhone('');
-      setPassword('');
-      setRePassword('');
-      setMsgAlert('');
-      setLoading(false);
-      navigation.replace('Dashboard');
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-      setMsgAlert(
-        error.response.status !== 0
-          ? error.response.data.msg
-          : 'Error de conexión',
-      );
+      setPhone(0);
+      navigation.goBack();
+    } else {
+      setMsgAlert('Error de conexión');
       setAlert(true);
+      setLoading(false);
     }
   };
 
   return (
-    <Background>
+    <BackgroundGray>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <BackButton navigation={navigation} />
-          <Logo />
+          <Title>Editar perfil</Title>
           <View style={styles.inputs}>
             <TextInput
-              style={styles.input}
+              style={[styles.input, {color: theme.colors.gray}]}
+              editable={false}
               placeholder="Email"
               placeholderTextColor="white"
               value={email}
@@ -114,37 +90,15 @@ const SingUp = ({navigation}) => {
               style={styles.input}
               placeholder="Teléfono"
               placeholderTextColor="white"
-              value={phone}
+              value={phone.toString()}
               onChangeText={text => setPhone(text)}
               keyboardType="phone-pad"
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Contraseña"
-              placeholderTextColor="white"
-              value={password}
-              onChangeText={text => setPassword(text)}
-              secureTextEntry={true}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Confirmar contraseña"
-              placeholderTextColor="white"
-              value={rePassword}
-              onChangeText={text => setRePassword(text)}
-              secureTextEntry={true}
             />
           </View>
           {loading && <ActivityIndicator animating={true} />}
           <Button style={styles.button} mode="contained" onPress={handleSubmit}>
-            Registrarse
+            Guardar
           </Button>
-          <View style={styles.row}>
-            <Text style={styles.text}>¿Ya tienes una cuenta? </Text>
-            <TouchableOpacity onPress={() => navigation.replace('SingIn')}>
-              <Text style={styles.link}>Inicia Sesión</Text>
-            </TouchableOpacity>
-          </View>
         </View>
       </ScrollView>
       <Portal>
@@ -158,7 +112,7 @@ const SingUp = ({navigation}) => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-    </Background>
+    </BackgroundGray>
   );
 };
 
@@ -170,10 +124,12 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     alignSelf: 'center',
     alignItems: 'center',
+    marginTop: 5,
     justifyContent: 'center',
   },
   inputs: {
     width: '100%',
+    marginTop: 45,
   },
   input: {
     marginBottom: 15,
@@ -207,4 +163,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SingUp;
+export default EditProfile;

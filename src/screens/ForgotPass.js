@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, TextInput} from 'react-native';
-import {Text, Button, Dialog, Portal, ActivityIndicator} from 'react-native-paper';
+import {Button} from 'react-native-paper';
 
 import Background from '../components/Background';
 import BackButton from '../components/BackButton';
 import Logo from '../components/Logo';
-import Header from '../components/Header';
+import Title from '../components/Title';
 
-export default function ForgotPass({navigation}) {
+const ForgotPass = ({navigation}) => {
   const [email, setEmail] = useState('');
 
   const handleSubmit = () => {
@@ -23,7 +23,7 @@ export default function ForgotPass({navigation}) {
       <View style={styles.container}>
         <BackButton navigation={navigation} />
         <Logo />
-        <Header>Recuperar contraseña</Header>
+        <Title>Recuperar contraseña</Title>
         <View style={styles.inputs}>
           <TextInput
             style={styles.input}
@@ -40,14 +40,14 @@ export default function ForgotPass({navigation}) {
       </View>
     </Background>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     width: '100%',
-    maxWidth: 340,
+    maxWidth: 400,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
@@ -70,3 +70,5 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
 });
+
+export default ForgotPass;

@@ -9,18 +9,21 @@ import {
   ForgotPass,
   Dashboard,
   SplashScreen,
+  EditProfile,
+  AddBalance,
+  Concert,
 } from './src/screens';
 import {AuthProvider} from './src/context/AuthProvider';
 import {ConcertsProvider} from './src/context/ConcertsProvider';
 
 const Stack = createStackNavigator();
 
-export default function App() {
+const App = () => {
   return (
-    <AuthProvider>
-      <ConcertsProvider>
-        <Provider theme={theme}>
-          <NavigationContainer>
+    <NavigationContainer>
+      <AuthProvider>
+        <ConcertsProvider>
+          <Provider theme={theme}>
             <Stack.Navigator
               initialRouteName="SplashScreen"
               screenOptions={{
@@ -31,12 +34,17 @@ export default function App() {
               <Stack.Screen name="SingUp" component={SingUp} />
               <Stack.Screen name="Dashboard" component={Dashboard} />
               <Stack.Screen name="ForgotPass" component={ForgotPass} />
+              <Stack.Screen name="EditProfile" component={EditProfile} />
+              <Stack.Screen name="AddBalance" component={AddBalance} />
+              <Stack.Screen name="Concert" component={Concert} />
             </Stack.Navigator>
-          </NavigationContainer>
-        </Provider>
-      </ConcertsProvider>
-    </AuthProvider>
+          </Provider>
+        </ConcertsProvider>
+      </AuthProvider>
+    </NavigationContainer>
   );
-}
+};
+
+export default App;
 
 // TODO: Que no se pueda poner horizontal

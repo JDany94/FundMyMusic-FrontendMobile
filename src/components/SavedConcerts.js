@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
-import Header from './Header'
+import Title from './Title'
 import useConcerts from '../hooks/useConcerts';
 
 const SavedConcerts = ({navigation}) => {
@@ -10,7 +10,7 @@ const SavedConcerts = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Header>Guardados</Header>
+      <Title>Guardados</Title>
     </View>
   );
 };

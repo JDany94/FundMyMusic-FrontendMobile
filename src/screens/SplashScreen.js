@@ -3,12 +3,12 @@ import {StyleSheet, View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ActivityIndicator} from 'react-native-paper';
 
-import BackgroundDashboard from '../components/BackgroundDashboard';
+import BackgroundGray from '../components/BackgroundGray';
 import Logo from '../components/Logo';
 import axiosClient from '../config/axiosClient';
 import useAuth from '../hooks/useAuth';
 
-export default function SplashScreen({navigation}) {
+const SplashScreen = ({navigation}) => {
   const {setAuth} = useAuth();
 
   useEffect(() => {
@@ -49,23 +49,23 @@ export default function SplashScreen({navigation}) {
   }, []);
 
   return (
-    <BackgroundDashboard>
+    <BackgroundGray>
       <View style={styles.container}>
         <Logo />
         <ActivityIndicator animating={true} />
       </View>
-    </BackgroundDashboard>
+    </BackgroundGray>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     width: '100%',
-    maxWidth: 340,
-    alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
   },
 });
+
+export default SplashScreen;

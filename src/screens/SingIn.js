@@ -1,6 +1,12 @@
 import React, {useState} from 'react';
 import {TouchableOpacity, StyleSheet, View, TextInput} from 'react-native';
-import {Text, Button, Dialog, Portal, ActivityIndicator} from 'react-native-paper';
+import {
+  Text,
+  Button,
+  Dialog,
+  Portal,
+  ActivityIndicator,
+} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Background from '../components/Background';
@@ -9,14 +15,13 @@ import {theme} from '../core/theme';
 import axiosClient from '../config/axiosClient';
 import useAuth from '../hooks/useAuth';
 
-export default function SingIn({navigation}) {
+const SingIn = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [alert, setAlert] = useState(false);
   const [msgAlert, setMsgAlert] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  const {setAuth} = useAuth();
+  const {setAuth, loading, setLoading} = useAuth();
 
   const handleSubmit = async () => {
     if ((email || password) === '') {
@@ -26,6 +31,7 @@ export default function SingIn({navigation}) {
     }
 
     // TODO:Validaciones
+    // TODO:Meter todos los axios en sus providers con su respectivo loading
 
     try {
       setLoading(true);
@@ -53,7 +59,7 @@ export default function SingIn({navigation}) {
       setAlert(true);
     }
   };
-
+  //TODO hacer scroll
   return (
     <Background>
       <View style={styles.container}>
@@ -105,14 +111,14 @@ export default function SingIn({navigation}) {
       </Portal>
     </Background>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     width: '100%',
-    maxWidth: 340,
+    maxWidth: 400,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
@@ -155,3 +161,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+export default SingIn;

@@ -1,10 +1,10 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import { theme } from '../core/theme';
+import {theme} from '../core/theme';
 
-export default function BackgroundDashboard({children}) {
+const BackgroundGray = ({children}) => {
   return <View style={styles.background}>{children}</View>;
-}
+};
 
 const styles = StyleSheet.create({
   background: {
@@ -12,3 +12,5 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
 });
+
+export default BackgroundGray;

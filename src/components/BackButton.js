@@ -2,7 +2,7 @@ import React from 'react';
 import {TouchableOpacity, Image, StyleSheet} from 'react-native';
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 
-export default function BackButton({navigation}) {
+const BackButton = ({navigation}) => {
   return (
     <TouchableOpacity
       onPress={() => navigation.goBack()}
@@ -13,7 +13,7 @@ export default function BackButton({navigation}) {
       />
     </TouchableOpacity>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -29,3 +29,5 @@ const styles = StyleSheet.create({
     height: 30,
   },
 });
+
+export default BackButton;
