@@ -114,7 +114,7 @@ const AddBalance = ({navigation}) => {
             />
           </View>
           {loading && <ActivityIndicator animating={true} />}
-          <Button style={styles.button} mode="contained" onPress={handleSubmit}>
+          <Button style={styles.button} icon="cash-multiple" mode="contained" onPress={handleSubmit}>
             Recargar
           </Button>
         </View>
@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   title: {
+    marginTop:10,
     alignItems: 'center',
   },
   inputs: {

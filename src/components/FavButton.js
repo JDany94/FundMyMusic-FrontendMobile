@@ -1,21 +1,17 @@
 import React from 'react';
 import {TouchableOpacity, StyleSheet} from 'react-native';
-
 import {getStatusBarHeight} from 'react-native-status-bar-height';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {theme} from '../core/theme';
+const FavButton = ({navigation, color}) => {
+  const handleFav = () => {
+    console.log('FAV');
+    //TODO poner state para esto en el provider
+  };
 
-const BackButton = ({navigation}) => {
   return (
-    <TouchableOpacity
-      onPress={() => navigation.goBack()}
-      style={styles.container}>
-      <MaterialCommunityIcons
-        name="chevron-left"
-        color={theme.colors.text}
-        size={45}
-      />
+    <TouchableOpacity onPress={handleFav} style={styles.container}>
+      <MaterialCommunityIcons name="bookmark-outline" color={color} size={32} />
     </TouchableOpacity>
   );
 };
@@ -26,8 +22,8 @@ const styles = StyleSheet.create({
     height: 35,
     position: 'absolute',
     top: getStatusBarHeight(),
-    left: 0,
+    right: 0,
   },
 });
 
-export default BackButton;
+export default FavButton;

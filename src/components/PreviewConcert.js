@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   place: {
     color: theme.colors.gray,
     width: 150,
-    fontSize: 12,
+    fontSize: 13,
   },
   date: {
     color: theme.colors.gray,

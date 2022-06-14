@@ -8,6 +8,7 @@ const AuthContext = createContext();
 const AuthProvider = ({children}) => {
   const [auth, setAuth] = useState({});
   const [loading, setLoading] = useState(false);
+  // TODO: Solo usar setLoading aqui
 
   const validName = val => {
     return /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u.test(

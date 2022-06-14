@@ -61,7 +61,10 @@ const EditProfile = ({navigation}) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <BackButton navigation={navigation} />
+          <View style={{marginTop:10}}>
+
           <Title>Editar perfil</Title>
+          </View>
           <View style={styles.inputs}>
             <TextInput
               style={[styles.input, {color: theme.colors.gray}]}
@@ -96,7 +99,7 @@ const EditProfile = ({navigation}) => {
             />
           </View>
           {loading && <ActivityIndicator animating={true} />}
-          <Button style={styles.button} mode="contained" onPress={handleSubmit}>
+          <Button style={styles.button} icon="content-save" mode="contained" onPress={handleSubmit}>
             Guardar
           </Button>
         </View>

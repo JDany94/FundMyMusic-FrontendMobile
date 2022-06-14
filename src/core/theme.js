@@ -7,7 +7,8 @@ export const theme = {
     text: '#fff',
     primary: '#990000',
     secondary: '#F77E21',
-    gray: '#9ca3af',
+    gray: '#6b7280',
+    green: '#16A34A',
     background: '#111827',
     bgBottomBar: '#1f2937'
   },

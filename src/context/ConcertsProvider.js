@@ -32,6 +32,7 @@ const ConcertsProvider = ({children}) => {
 
   const getConcert = async id => {
     try {
+      setLoading(true);
       const token = await AsyncStorage.getItem('Token');
       if (!token || !auth) return;
       const config = {
@@ -42,6 +43,7 @@ const ConcertsProvider = ({children}) => {
       };
       const {data} = await axiosClient.get(`/concerts/${id}`, config);
       setConcert(data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
