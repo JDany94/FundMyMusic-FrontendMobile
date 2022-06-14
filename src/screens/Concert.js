@@ -26,6 +26,7 @@ const Concert = ({navigation}) => {
     FlyerURL,
     title,
     place,
+    genre,
     date,
     description,
     capacity,
@@ -61,7 +62,7 @@ const Concert = ({navigation}) => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
             <BackButton navigation={navigation} />
-            <FavButton navigation={navigation} color={theme.colors.primary} />
+            <FavButton navigation={navigation} />
             <Image
               style={styles.img}
               source={{
@@ -97,6 +98,12 @@ const Concert = ({navigation}) => {
               </Button>
             )}
             <View style={styles.separator} />
+            <Text style={styles.textGenre}>
+              <Text style={{color: theme.colors.gray, fontWeight: 'bold'}}>
+                Género:{' '}
+              </Text>
+              {genre}
+            </Text>
             <Text style={styles.textDesc}>{description}</Text>
             <Text style={styles.textGray}>
               Capacidad: <Text style={styles.textNumbers}>{capacity}</Text>
@@ -186,6 +193,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     textAlign: 'justify',
+  },
+  textGenre: {
+    fontSize: 16,
+    textAlign: 'justify',
+    marginBottom: 10,
   },
   textNumbers: {
     fontSize: 18,

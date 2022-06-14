@@ -7,7 +7,7 @@ import useConcerts from '../hooks/useConcerts';
 const Dashboard = ({navigation}) => {
   const {getConcerts} = useConcerts();
 
-  useEffect(() => {
+  useEffect( async () => {
     getConcerts();
   }, []);
 

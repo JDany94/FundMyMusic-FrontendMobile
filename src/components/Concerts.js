@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, StyleSheet, Text, ScrollView} from 'react-native';
+import React, {useState, useCallback} from 'react';
+import {View, StyleSheet, Text, ScrollView, RefreshControl} from 'react-native';
 import {Searchbar} from 'react-native-paper';
 
 import Title from './Title';
@@ -11,9 +11,16 @@ import {theme} from '../core/theme';
 
 const Concerts = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const onChangeSearch = query => setSearchQuery(query);
-  
-  const {concerts} = useConcerts();
+
+  const {concerts, getConcerts} = useConcerts();
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    getConcerts();
+    setRefreshing(false);
+  }, []);
 
   const filter =
     searchQuery === ''
@@ -36,10 +43,14 @@ const Concerts = ({navigation}) => {
   };
 
   //TODO hacer el carousel de pocas entradas
-  
+
   return (
     <BackgroundGray>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}>
         <Searchbar
           style={styles.searchBar}
           placeholder="Buscar"

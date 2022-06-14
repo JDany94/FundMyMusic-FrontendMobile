@@ -10,7 +10,7 @@ const ConcertsProvider = ({children}) => {
   const [concert, setConcert] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const {auth} = useAuth();
+  const {auth, setAuth} = useAuth();
 
   const getConcerts = async () => {
     try {
@@ -49,6 +49,26 @@ const ConcertsProvider = ({children}) => {
     }
   };
 
+  const savedConcertChange = async savedConcerts => {
+    try {
+      const token = await AsyncStorage.getItem('Token');
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const {data} = await axiosClient.post(
+        `/concerts/user-saved-concerts`,
+        {savedConcerts},
+        config,
+      );
+      setAuth(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const singOutConcerts = () => {
     setConcerts([]);
     setConcert({});
@@ -63,6 +83,7 @@ const ConcertsProvider = ({children}) => {
         getConcerts,
         concert,
         getConcert,
+        savedConcertChange,
         singOutConcerts,
       }}>
       {children}

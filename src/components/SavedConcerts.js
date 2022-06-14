@@ -1,29 +1,85 @@
-import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useState, useCallback} from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  Image,
+  RefreshControl,
+} from 'react-native';
+import PreviewConcertSaved from './PreviewConcertSaved';
+import BackgroundGray from './BackgroundGray';
+import {theme} from '../core/theme';
 
-import Title from './Title'
 import useConcerts from '../hooks/useConcerts';
+import useAuth from '../hooks/useAuth';
 
 const SavedConcerts = ({navigation}) => {
-  //Falta guardarlos en un context
-  const {concerts} = useConcerts();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const {concerts, getConcerts} = useConcerts();
+  const {auth} = useAuth();
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    getConcerts();
+    setRefreshing(false);
+  }, []);
+
+  const filter =
+    auth.savedConcerts.length === 0
+      ? []
+      : concerts.filter(concert => auth.savedConcerts.includes(concert._id));
 
   return (
-    <View style={styles.container}>
-      <Title>Guardados</Title>
-    </View>
+    <BackgroundGray>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}>
+        <View style={styles.concerts}>
+          {filter.length ? (
+            filter.map(concert => (
+              <PreviewConcertSaved
+                key={concert._id}
+                concert={concert}
+                navigation={navigation}
+              />
+            ))
+          ) : (
+            <View style={styles.noConcert}>
+              <Text style={styles.noConcertText}>
+                No hay conciertos guardados
+              </Text>
+              <Image
+                source={require('../assets/logo-alert.png')}
+                style={styles.image}
+              />
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </BackgroundGray>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  concerts: {
+    marginBottom: 80,
+  },
+  noConcert: {
     flex: 1,
-    padding: 20,
-    width: '100%',
-    alignSelf: 'center',
     alignItems: 'center',
-    backgroundColor: '#111827',
-    justifyContent: 'center',
+  },
+  noConcertText: {
+    marginTop: 30,
+    fontWeight: 'bold',
+    fontSize: 15,
+    color: theme.colors.text,
+  },
+  image: {
+    marginTop: 50,
   },
 });
 
