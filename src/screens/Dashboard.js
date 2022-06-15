@@ -7,7 +7,7 @@ import useConcerts from '../hooks/useConcerts';
 const Dashboard = ({navigation}) => {
   const {getConcerts} = useConcerts();
 
-  useEffect( async () => {
+  useEffect(() => {
     getConcerts();
   }, []);
 
@@ -15,3 +15,4 @@ const Dashboard = ({navigation}) => {
 };
 
 export default Dashboard;
+ 

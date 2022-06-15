@@ -2,32 +2,80 @@ import React, {useState, useCallback} from 'react';
 import {View, StyleSheet, Text, ScrollView, RefreshControl} from 'react-native';
 import {Searchbar} from 'react-native-paper';
 
+import Carousel from 'react-native-anchor-carousel';
+
 import Title from './Title';
 import PreviewConcert from './PreviewConcert';
+import PreviewConcertCarousel from './PreviewConcertCarousel';
+
 import BackgroundGray from './BackgroundGray';
 
 import useConcerts from '../hooks/useConcerts';
+import useAuth from '../hooks/useAuth';
+
 import {theme} from '../core/theme';
 
 const Concerts = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
-  const onChangeSearch = query => setSearchQuery(query);
 
   const {concerts, getConcerts} = useConcerts();
+  const {loadUserData} = useAuth();
+
+  const onChangeSearch = query => setSearchQuery(query);
+
+  const renderItemCarousel = ({item, index}) => {
+    return (
+      <PreviewConcertCarousel
+        key={item._id}
+        concert={item}
+        navigation={navigation}
+      />
+    );
+  };
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
+    loadUserData();
     getConcerts();
     setRefreshing(false);
   }, []);
 
+  const almostSoldout = concert => {
+    const availables = concert.capacity - concert.sold;
+    if (availables === 0) return null;
+    if ((availables / concert.capacity) * 100 < 20) {
+      return concert;
+    } else {
+      return null;
+    }
+  };
+
+  const carouselConcerts = concerts.filter(concert => almostSoldout(concert));
+
   const filter =
     searchQuery === ''
       ? []
-      : concerts.filter(concert =>
-          concert.title.toLowerCase().includes(searchQuery.toLowerCase()),
-        );
+      : concerts
+          .filter(concert =>
+            concert.title.toLowerCase().includes(searchQuery.toLowerCase()),
+          )
+          .concat(
+            concerts.filter(concert =>
+              concert.genre.toLowerCase().includes(searchQuery.toLowerCase()),
+            ),
+          )
+          .concat(
+            concerts.filter(concert =>
+              concert.place.toLowerCase().includes(searchQuery.toLowerCase()),
+            ),
+          )
+          .reduce((acc, item) => {
+            if (!acc.includes(item)) {
+              acc.push(item);
+            }
+            return acc;
+          }, []);
 
   const sevenDays = concert => {
     const concertDate = new Date(concert.date.split('T')[0]);
@@ -42,8 +90,6 @@ const Concerts = ({navigation}) => {
     return concerts.sort((a, b) => b.sold - a.sold).slice(0, 4);
   };
 
-  //TODO hacer el carousel de pocas entradas
-
   return (
     <BackgroundGray>
       <ScrollView
@@ -53,7 +99,7 @@ const Concerts = ({navigation}) => {
         showsVerticalScrollIndicator={false}>
         <Searchbar
           style={styles.searchBar}
-          placeholder="Buscar"
+          placeholder="Buscar concierto, género, lugar..."
           placeholderTextColor={theme.colors.gray}
           onChangeText={onChangeSearch}
           value={searchQuery}
@@ -78,6 +124,12 @@ const Concerts = ({navigation}) => {
             </ScrollView>
           </>
         )}
+
+        <Carousel
+          data={carouselConcerts}
+          renderItem={renderItemCarousel}
+          separatorWidth={0}
+        />
 
         <Title style={styles.title}>Nuevos</Title>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -130,6 +182,22 @@ const Concerts = ({navigation}) => {
             <Text style={styles.noConcert}>No hay conciertos publicados</Text>
           )}
         </View>
+
+        <Title style={styles.title}>Todos</Title>
+        <View style={styles.all}>
+          {concerts.length ? (
+            concerts.map(concert => (
+              <PreviewConcert
+                key={concert._id}
+                concert={concert}
+                space={true}
+                navigation={navigation}
+              />
+            ))
+          ) : (
+            <Text style={styles.noConcert}>No hay conciertos publicados</Text>
+          )}
+        </View>
       </ScrollView>
     </BackgroundGray>
   );
@@ -152,6 +220,11 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   mostSold: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  all: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',

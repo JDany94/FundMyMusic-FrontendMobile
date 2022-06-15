@@ -18,10 +18,11 @@ const SavedConcerts = ({navigation}) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const {concerts, getConcerts} = useConcerts();
-  const {auth} = useAuth();
+  const {auth, loadUserData} = useAuth();
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
+    loadUserData();
     getConcerts();
     setRefreshing(false);
   }, []);

@@ -12,6 +12,7 @@ import {
   EditProfile,
   AddBalance,
   Concert,
+  ConcertTicket,
 } from './src/screens';
 import {AuthProvider} from './src/context/AuthProvider';
 import {ConcertsProvider} from './src/context/ConcertsProvider';
@@ -37,6 +38,7 @@ const App = () => {
               <Stack.Screen name="EditProfile" component={EditProfile} />
               <Stack.Screen name="AddBalance" component={AddBalance} />
               <Stack.Screen name="Concert" component={Concert} />
+              <Stack.Screen name="ConcertTicket" component={ConcertTicket} />
             </Stack.Navigator>
           </Provider>
         </ConcertsProvider>

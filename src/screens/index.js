@@ -6,3 +6,5 @@ export { default as Dashboard } from './Dashboard'
 export { default as EditProfile } from './EditProfile'
 export { default as AddBalance } from './AddBalance'
 export { default as Concert } from './Concert'
+export { default as ConcertTicket } from './ConcertTicket'
+ 

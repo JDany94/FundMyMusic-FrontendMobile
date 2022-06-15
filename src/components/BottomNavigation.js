@@ -9,7 +9,7 @@ import SavedConcerts from './SavedConcerts';
 import Tickets from './Tickets';
 
 import {theme} from '../core/theme';
-
+ 
 const BottomNav = ({navigation}) => {
   const Tab = createBottomTabNavigator();
   return (

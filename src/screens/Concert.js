@@ -6,7 +6,14 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {ActivityIndicator, Text, Button} from 'react-native-paper';
+import {
+  ActivityIndicator,
+  Text,
+  Button,
+  Dialog,
+  Portal,
+  Paragraph,
+} from 'react-native-paper';
 
 import Title from '../components/Title';
 import BackButton from '../components/BackButton';
@@ -17,12 +24,15 @@ import {theme} from '../core/theme';
 import useConcerts from '../hooks/useConcerts';
 
 const Concert = ({navigation}) => {
+  const [alert, setAlert] = useState(false);
+  const [msgAlert, setMsgAlert] = useState('');
+
   const [numberTickets, setNumberTickets] = useState(1);
 
-  const {concert, loading} = useConcerts();
+  const {concert, loading, loadBuy, buyTickets, getConcert, getConcerts} =
+    useConcerts();
 
   const {
-    _id,
     FlyerURL,
     title,
     place,
@@ -38,8 +48,20 @@ const Concert = ({navigation}) => {
     soldOut,
   } = concert;
 
-  const handleBuy = () => {
-    console.log(_id);
+  const handleBuy = async () => {
+    if (await buyTickets(concert, numberTickets)) {
+      getConcerts();
+      setMsgAlert('Compra realizada con exito!');
+      setAlert(true);
+    } else {
+      setMsgAlert('Saldo insuficiente');
+      setAlert(true);
+    }
+  };
+
+  const handleAlert = async () => {
+    setAlert(false);
+    navigation.replace('Dashboard');
   };
 
   const handleSum = () => {
@@ -138,7 +160,7 @@ const Concert = ({navigation}) => {
                     <Text style={styles.textCounter}>+</Text>
                   </TouchableOpacity>
                 </View>
-
+                {loadBuy && <ActivityIndicator animating={true} />}
                 <Button
                   style={styles.button}
                   icon="ticket-confirmation-outline"
@@ -151,6 +173,24 @@ const Concert = ({navigation}) => {
           </View>
         </ScrollView>
       )}
+      <Portal>
+        <Dialog
+          style={{backgroundColor: theme.colors.background}}
+          visible={alert}
+          onDismiss={() => setAlert(false)}>
+          <Dialog.Title>{msgAlert}</Dialog.Title>
+          {msgAlert === 'Compra realizada con exito!' ? (
+            <Dialog.Content>
+              <Paragraph>
+                En el apartado de boletos tienes tus entradas
+              </Paragraph>
+            </Dialog.Content>
+          ) : null}
+          <Dialog.Actions>
+            <Button onPress={handleAlert}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </BackgroundGray>
   );
 };
