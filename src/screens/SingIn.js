@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {TouchableOpacity, StyleSheet, View, TextInput} from 'react-native';
+import {
+  TouchableOpacity,
+  StyleSheet,
+  View,
+  TextInput,
+  Pressable,
+} from 'react-native';
 import {
   Text,
   Button,
@@ -7,12 +13,13 @@ import {
   Portal,
   ActivityIndicator,
 } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Background from '../components/Background';
 import Logo from '../components/Logo';
+import {useTogglePasswordVisibility} from '../helpers/useTogglePasswordVisibility';
 import {theme} from '../core/theme';
-import axiosClient from '../config/axiosClient';
+
 import useAuth from '../hooks/useAuth';
 
 const SingIn = ({navigation}) => {
@@ -21,7 +28,9 @@ const SingIn = ({navigation}) => {
   const [alert, setAlert] = useState(false);
   const [msgAlert, setMsgAlert] = useState('');
 
-  const {setAuth, loading, setLoading} = useAuth();
+  const {passwordVisibility, rightIcon, handlePasswordVisibility} =
+    useTogglePasswordVisibility();
+  const {singIn, loading} = useAuth();
 
   const handleSubmit = async () => {
     if ((email || password) === '') {
@@ -29,29 +38,17 @@ const SingIn = ({navigation}) => {
       setAlert(true);
       return;
     }
-
-    // TODO:Que se vea la contraseña
     // TODO:Validaciones
-    // TODO:Meter todos los axios en sus providers con su respectivo loading
 
     try {
-      setLoading(true);
-      const {data} = await axiosClient.post(`/user/auth`, {
-        email,
-        password,
-        from: 'User',
-      });
-      await AsyncStorage.setItem('Token', data.token);
-      setAuth(data);
+      await singIn(email, password);
 
       setEmail('');
       setPassword('');
       setMsgAlert('');
-      setLoading(false);
       navigation.replace('Dashboard');
     } catch (error) {
       console.log(error);
-      setLoading(false);
       setMsgAlert(
         error.response.status !== 0
           ? error.response.data.msg
@@ -60,7 +57,7 @@ const SingIn = ({navigation}) => {
       setAlert(true);
     }
   };
-  //TODO hacer scroll
+
   return (
     <Background>
       <View style={styles.container}>
@@ -74,14 +71,27 @@ const SingIn = ({navigation}) => {
             onChangeText={text => setEmail(text)}
             keyboardType="email-address"
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Contraseña"
-            placeholderTextColor="white"
-            value={password}
-            onChangeText={text => setPassword(text)}
-            secureTextEntry={true}
-          />
+          <View style={styles.inputContainerPass}>
+            <TextInput
+              style={styles.inputPass}
+              name="password"
+              autoCapitalize="none"
+              autoCorrect={false}
+              enablesReturnKeyAutomatically
+              placeholder="Contraseña"
+              placeholderTextColor="white"
+              value={password}
+              onChangeText={text => setPassword(text)}
+              secureTextEntry={passwordVisibility}
+            />
+            <Pressable onPress={handlePasswordVisibility}>
+              <MaterialCommunityIcons
+                name={rightIcon}
+                size={24}
+                color={theme.colors.text}
+              />
+            </Pressable>
+          </View>
         </View>
         {loading && <ActivityIndicator animating={true} />}
         <View style={styles.forgotPassword}>
@@ -133,6 +143,19 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 25,
     padding: 12,
+  },
+  inputContainerPass: {
+    width: '100%',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    borderRadius: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  inputPass: {
+    color: theme.colors.text,
+    padding: 12,
+    width: '90%',
   },
   forgotPassword: {
     width: '100%',

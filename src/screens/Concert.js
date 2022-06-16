@@ -29,8 +29,7 @@ const Concert = ({navigation}) => {
 
   const [numberTickets, setNumberTickets] = useState(1);
 
-  const {concert, loading, loadBuy, buyTickets, getConcert, getConcerts} =
-    useConcerts();
+  const {concert, loading, loadBuy, buyTickets, getConcerts} = useConcerts();
 
   const {
     FlyerURL,

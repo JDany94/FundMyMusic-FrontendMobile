@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
-import {Button, Text} from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Button, Text, ActivityIndicator} from 'react-native-paper';
 
 import Title from '../components/Title';
 import useAuth from '../hooks/useAuth';
+import useConcerts from '../hooks/useConcerts';
 import {theme} from '../core/theme';
 
 const Profile = ({navigation}) => {
@@ -15,11 +15,12 @@ const Profile = ({navigation}) => {
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('');
 
-  const {auth, singOutAuth} = useAuth();
+  const {auth, loading, singOutAuth} = useAuth();
+  const {singOutConcerts} = useConcerts();
 
   useEffect(() => {
     setEmail(auth.email);
-    setBalance(auth.balance)
+    setBalance(auth.balance);
     setName(auth.name);
     setSurname(auth.surname);
     setPhone(auth.phone);
@@ -27,8 +28,8 @@ const Profile = ({navigation}) => {
   }, [auth]);
 
   const handleClose = async () => {
-    await AsyncStorage.clear();
-    singOutAuth();
+    singOutConcerts();
+    await singOutAuth();
     navigation.replace('SingIn');
   };
   const handleEdit = async () => {
@@ -38,15 +39,17 @@ const Profile = ({navigation}) => {
     navigation.navigate('AddBalance');
   };
 
-  //TODO: Hacer agregar saldo
-
   return (
     <View style={{flex: 1, backgroundColor: theme.colors.background}}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <Title>Saldo</Title>
           <Title style={styles.euros}>{balance} €</Title>
-          <Button style={styles.button} icon="cash-multiple" mode="contained" onPress={handleAddBalance}>
+          <Button
+            style={styles.button}
+            icon="cash-multiple"
+            mode="contained"
+            onPress={handleAddBalance}>
             Agregar saldo
           </Button>
           <View style={styles.containerProfile}>
@@ -63,10 +66,19 @@ const Profile = ({navigation}) => {
               {role === 'User' ? 'Usuario' : null}
             </Text>
           </View>
-          <Button style={styles.button} icon="pencil" mode="contained" onPress={handleEdit}>
+          <Button
+            style={styles.button}
+            icon="pencil"
+            mode="contained"
+            onPress={handleEdit}>
             Editar perfil
           </Button>
-          <Button style={styles.button} icon="logout" mode="contained" onPress={handleClose}>
+          {loading ? <ActivityIndicator animating={true} /> : null}
+          <Button
+            style={styles.button}
+            icon="logout"
+            mode="contained"
+            onPress={handleClose}>
             Cerrar Sesión
           </Button>
 

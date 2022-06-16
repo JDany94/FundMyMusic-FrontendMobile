@@ -17,7 +17,7 @@ const EditProfile = ({navigation}) => {
   const [alert, setAlert] = useState(false);
   const [msgAlert, setMsgAlert] = useState('');
 
-  const {auth, editProfile, loading, setLoading} = useAuth();
+  const {auth, editProfile, loading} = useAuth();
 
   useEffect(() => {
     setEmail(auth.email);
@@ -41,9 +41,7 @@ const EditProfile = ({navigation}) => {
       surname,
       phone,
     };
-    setLoading(true);
     if (await editProfile(JSON)) {
-      setLoading(false);
       setEmail('');
       setName('');
       setSurname('');
@@ -52,7 +50,6 @@ const EditProfile = ({navigation}) => {
     } else {
       setMsgAlert('Error de conexión');
       setAlert(true);
-      setLoading(false);
     }
   };
 
@@ -61,9 +58,8 @@ const EditProfile = ({navigation}) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <BackButton navigation={navigation} />
-          <View style={{marginTop:10}}>
-
-          <Title>Editar perfil</Title>
+          <View style={{marginTop: 10}}>
+            <Title>Editar perfil</Title>
           </View>
           <View style={styles.inputs}>
             <TextInput
@@ -99,7 +95,11 @@ const EditProfile = ({navigation}) => {
             />
           </View>
           {loading && <ActivityIndicator animating={true} />}
-          <Button style={styles.button} icon="content-save" mode="contained" onPress={handleSubmit}>
+          <Button
+            style={styles.button}
+            icon="content-save"
+            mode="contained"
+            onPress={handleSubmit}>
             Guardar
           </Button>
         </View>

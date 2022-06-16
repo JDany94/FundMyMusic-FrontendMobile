@@ -47,6 +47,7 @@ const ConcertsProvider = ({children}) => {
       setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -107,13 +108,12 @@ const ConcertsProvider = ({children}) => {
   return (
     <ConcertsContext.Provider
       value={{
-        loading,
-        loadBuy,
-        setLoading,
         concerts,
         getConcerts,
         concert,
         getConcert,
+        loading,
+        loadBuy,
         savedConcertChange,
         buyTickets,
         singOutConcerts,

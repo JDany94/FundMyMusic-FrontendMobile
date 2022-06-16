@@ -1,6 +1,6 @@
 import React, {useState, useCallback} from 'react';
 import {View, StyleSheet, Text, ScrollView, RefreshControl} from 'react-native';
-import {Searchbar} from 'react-native-paper';
+import {Searchbar, ActivityIndicator} from 'react-native-paper';
 
 import Carousel from 'react-native-anchor-carousel';
 
@@ -92,113 +92,122 @@ const Concerts = ({navigation}) => {
 
   return (
     <BackgroundGray>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        showsVerticalScrollIndicator={false}>
-        <Searchbar
-          style={styles.searchBar}
-          placeholder="Buscar concierto, género, lugar..."
-          placeholderTextColor={theme.colors.gray}
-          onChangeText={onChangeSearch}
-          value={searchQuery}
+      {concerts.length === 0 ? (
+        <ActivityIndicator
+          style={{flex: 1, justifyContent: 'center'}}
+          animating={true}
         />
+      ) : (
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          showsVerticalScrollIndicator={false}>
+          <Searchbar
+            style={styles.searchBar}
+            placeholder="Buscar concierto, género, lugar..."
+            placeholderTextColor={theme.colors.gray}
+            onChangeText={onChangeSearch}
+            value={searchQuery}
+          />
 
-        {searchQuery.length > 0 && (
-          <>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {filter.length ? (
-                filter.map(concert => (
+          {searchQuery.length > 0 && (
+            <>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {filter.length ? (
+                  filter.map(concert => (
+                    <PreviewConcert
+                      key={concert._id}
+                      concert={concert}
+                      navigation={navigation}
+                    />
+                  ))
+                ) : (
+                  <Text style={styles.noConcert}>
+                    No se ha encontrado nada...
+                  </Text>
+                )}
+              </ScrollView>
+            </>
+          )}
+
+          <Carousel
+            data={carouselConcerts}
+            renderItem={renderItemCarousel}
+            separatorWidth={0}
+          />
+
+          <Title style={styles.title}>Nuevos</Title>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {concerts.length ? (
+              concerts
+                .map(concert => (
                   <PreviewConcert
                     key={concert._id}
                     concert={concert}
                     navigation={navigation}
                   />
                 ))
-              ) : (
-                <Text style={styles.noConcert}>
-                  No se ha encontrado nada...
-                </Text>
-              )}
-            </ScrollView>
-          </>
-        )}
-
-        <Carousel
-          data={carouselConcerts}
-          renderItem={renderItemCarousel}
-          separatorWidth={0}
-        />
-
-        <Title style={styles.title}>Nuevos</Title>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {concerts.length ? (
-            concerts
-              .map(concert => (
-                <PreviewConcert
-                  key={concert._id}
-                  concert={concert}
-                  navigation={navigation}
-                />
-              ))
-              .reverse()
-          ) : (
-            <Text style={styles.noConcert}>No hay conciertos publicados</Text>
-          )}
-        </ScrollView>
-
-        <Title style={styles.title}>Próximamente</Title>
-        <View style={styles.sevenDays}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {concerts.length ? (
-              concerts.map(concert =>
-                sevenDays(concert) ? (
-                  <PreviewConcert
-                    key={concert._id}
-                    concert={concert}
-                    navigation={navigation}
-                  />
-                ) : null,
-              )
+                .reverse()
             ) : (
               <Text style={styles.noConcert}>No hay conciertos publicados</Text>
             )}
           </ScrollView>
-        </View>
 
-        <Title style={styles.title}>Más Vendidos</Title>
-        <View style={styles.mostSold}>
-          {concerts.length ? (
-            mostSold(concerts).map(concert => (
-              <PreviewConcert
-                key={concert._id}
-                concert={concert}
-                space={true}
-                navigation={navigation}
-              />
-            ))
-          ) : (
-            <Text style={styles.noConcert}>No hay conciertos publicados</Text>
-          )}
-        </View>
+          <Title style={styles.title}>Próximamente</Title>
+          <View style={styles.sevenDays}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {concerts.length ? (
+                concerts.map(concert =>
+                  sevenDays(concert) ? (
+                    <PreviewConcert
+                      key={concert._id}
+                      concert={concert}
+                      navigation={navigation}
+                    />
+                  ) : null,
+                )
+              ) : (
+                <Text style={styles.noConcert}>
+                  No hay conciertos publicados
+                </Text>
+              )}
+            </ScrollView>
+          </View>
 
-        <Title style={styles.title}>Todos</Title>
-        <View style={styles.all}>
-          {concerts.length ? (
-            concerts.map(concert => (
-              <PreviewConcert
-                key={concert._id}
-                concert={concert}
-                space={true}
-                navigation={navigation}
-              />
-            ))
-          ) : (
-            <Text style={styles.noConcert}>No hay conciertos publicados</Text>
-          )}
-        </View>
-      </ScrollView>
+          <Title style={styles.title}>Más Vendidos</Title>
+          <View style={styles.mostSold}>
+            {concerts.length ? (
+              mostSold(concerts).map(concert => (
+                <PreviewConcert
+                  key={concert._id}
+                  concert={concert}
+                  space={true}
+                  navigation={navigation}
+                />
+              ))
+            ) : (
+              <Text style={styles.noConcert}>No hay conciertos publicados</Text>
+            )}
+          </View>
+
+          <Title style={styles.title}>Todos</Title>
+          <View style={styles.all}>
+            {concerts.length ? (
+              concerts.map(concert => (
+                <PreviewConcert
+                  key={concert._id}
+                  concert={concert}
+                  space={true}
+                  navigation={navigation}
+                />
+              ))
+            ) : (
+              <Text style={styles.noConcert}>No hay conciertos publicados</Text>
+            )}
+          </View>
+        </ScrollView>
+      )}
     </BackgroundGray>
   );
 };

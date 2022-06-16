@@ -7,7 +7,8 @@ import useConcerts from '../hooks/useConcerts';
 import useAuth from '../hooks/useAuth';
 
 const PreviewConcertTickets = ({navigation, concert}) => {
-  const {title, _id, place, date, FlyerURL, genre, price, capacity, sold} = concert;
+  const {title, _id, place, date, FlyerURL, genre, price, capacity, sold} =
+    concert;
 
   const {getConcert} = useConcerts();
   const {auth} = useAuth();
@@ -17,11 +18,10 @@ const PreviewConcertTickets = ({navigation, concert}) => {
     navigation.navigate('ConcertTicket');
   };
 
-  const getQuantity = (id) => {
+  const getQuantity = id => {
     for (let i = 0; i < auth.purchasedTickets.length; i++) {
       if (
-        JSON.stringify(auth.purchasedTickets[i].concert) ===
-        JSON.stringify(id)
+        JSON.stringify(auth.purchasedTickets[i].concert) === JSON.stringify(id)
       ) {
         return auth.purchasedTickets[i].quantity;
       }
@@ -50,7 +50,7 @@ const PreviewConcertTickets = ({navigation, concert}) => {
     </Pressable>
   );
 };
-//TODO revisar no concerts saved
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

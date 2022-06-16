@@ -22,7 +22,7 @@ const AddBalance = ({navigation}) => {
   const [alert, setAlert] = useState(false);
   const [msgAlert, setMsgAlert] = useState('');
 
-  const {auth, editProfile, loading, setLoading} = useAuth();
+  const {auth, editProfile, loading} = useAuth();
 
   const handleSubmit = async () => {
     if (newBalance === '' || parseInt(newBalance) <= 0) {
@@ -30,20 +30,18 @@ const AddBalance = ({navigation}) => {
       setAlert(true);
       return;
     }
+    //TODO validar tarjeta
     const total = parseInt(auth.balance) + parseInt(newBalance);
     const JSON = {
       _id: auth._id,
       balance: total,
     };
-    setLoading(true);
     if (await editProfile(JSON)) {
       // TODO: Notificacion bonita
-      setLoading(false);
       navigation.goBack();
     } else {
       setMsgAlert('Error de conexión');
       setAlert(true);
-      setLoading(false);
     }
   };
 
@@ -114,7 +112,11 @@ const AddBalance = ({navigation}) => {
             />
           </View>
           {loading && <ActivityIndicator animating={true} />}
-          <Button style={styles.button} icon="cash-multiple" mode="contained" onPress={handleSubmit}>
+          <Button
+            style={styles.button}
+            icon="cash-multiple"
+            mode="contained"
+            onPress={handleSubmit}>
             Recargar
           </Button>
         </View>
@@ -144,7 +146,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   title: {
-    marginTop:10,
+    marginTop: 10,
     alignItems: 'center',
   },
   inputs: {

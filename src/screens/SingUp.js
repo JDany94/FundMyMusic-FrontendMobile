@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Pressable,
 } from 'react-native';
 import {
   Text,
@@ -13,13 +14,14 @@ import {
   Portal,
   ActivityIndicator,
 } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Background from '../components/Background';
 import Logo from '../components/Logo';
+import {useTogglePasswordVisibility} from '../helpers/useTogglePasswordVisibility';
 import BackButton from '../components/BackButton';
 import {theme} from '../core/theme';
-import axiosClient from '../config/axiosClient';
+
 import useAuth from '../hooks/useAuth';
 
 const SingUp = ({navigation}) => {
@@ -32,7 +34,15 @@ const SingUp = ({navigation}) => {
   const [alert, setAlert] = useState(false);
   const [msgAlert, setMsgAlert] = useState('');
 
-  const {setAuth, loading, setLoading} = useAuth();
+  const {
+    passwordVisibility,
+    rePasswordVisibility,
+    rightIcon,
+    rightIconRe,
+    handlePasswordVisibility,
+    handleRePasswordVisibility,
+  } = useTogglePasswordVisibility();
+  const {singUp, loading} = useAuth();
 
   const handleSubmit = async () => {
     if ([email, name, surname, phone, password, rePassword].includes('')) {
@@ -44,21 +54,19 @@ const SingUp = ({navigation}) => {
     // TODO:Validaciones
 
     try {
-      setLoading(true);
-      const JSON = {
+      const user = {
         email,
         name,
         surname,
         phone,
         password,
         role: 'User',
-        //sin validar correo
+        //TODO sin validar correo
         confirmed: 'true',
         token: 'Confirmed',
       };
-      const {data} = await axiosClient.post(`/user`, JSON);
-      await AsyncStorage.setItem('Token', data.token);
-      setAuth(data);
+
+      await singUp(user);
 
       setEmail('');
       setName('');
@@ -67,11 +75,9 @@ const SingUp = ({navigation}) => {
       setPassword('');
       setRePassword('');
       setMsgAlert('');
-      setLoading(false);
       navigation.replace('Dashboard');
     } catch (error) {
       console.log(error);
-      setLoading(false);
       setMsgAlert(
         error.response.status !== 0
           ? error.response.data.msg
@@ -118,22 +124,48 @@ const SingUp = ({navigation}) => {
               onChangeText={text => setPhone(text)}
               keyboardType="phone-pad"
             />
-            <TextInput
-              style={styles.input}
-              placeholder="Contraseña"
-              placeholderTextColor="white"
-              value={password}
-              onChangeText={text => setPassword(text)}
-              secureTextEntry={true}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Confirmar contraseña"
-              placeholderTextColor="white"
-              value={rePassword}
-              onChangeText={text => setRePassword(text)}
-              secureTextEntry={true}
-            />
+            <View style={styles.inputContainerPass}>
+              <TextInput
+                style={styles.inputPass}
+                name="password"
+                autoCapitalize="none"
+                autoCorrect={false}
+                enablesReturnKeyAutomatically
+                placeholder="Contraseña"
+                placeholderTextColor="white"
+                value={password}
+                onChangeText={text => setPassword(text)}
+                secureTextEntry={passwordVisibility}
+              />
+              <Pressable onPress={handlePasswordVisibility}>
+                <MaterialCommunityIcons
+                  name={rightIcon}
+                  size={24}
+                  color={theme.colors.text}
+                />
+              </Pressable>
+            </View>
+            <View style={styles.inputContainerPass}>
+              <TextInput
+                style={styles.inputPass}
+                name="repassword"
+                autoCapitalize="none"
+                autoCorrect={false}
+                enablesReturnKeyAutomatically
+                placeholder="Confirmar contraseña"
+                placeholderTextColor="white"
+                value={rePassword}
+                onChangeText={text => setRePassword(text)}
+                secureTextEntry={rePasswordVisibility}
+              />
+              <Pressable onPress={handleRePasswordVisibility}>
+                <MaterialCommunityIcons
+                  name={rightIconRe}
+                  size={24}
+                  color={theme.colors.text}
+                />
+              </Pressable>
+            </View>
           </View>
           {loading && <ActivityIndicator animating={true} />}
           <Button style={styles.button} mode="contained" onPress={handleSubmit}>
@@ -181,6 +213,19 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     color: theme.colors.text,
     padding: 12,
+  },
+  inputContainerPass: {
+    width: '100%',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    borderRadius: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  inputPass: {
+    color: theme.colors.text,
+    padding: 12,
+    width: '90%',
   },
   button: {
     borderRadius: 25,
