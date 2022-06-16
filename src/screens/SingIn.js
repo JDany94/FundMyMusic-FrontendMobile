@@ -30,6 +30,7 @@ const SingIn = ({navigation}) => {
       return;
     }
 
+    // TODO:Que se vea la contraseña
     // TODO:Validaciones
     // TODO:Meter todos los axios en sus providers con su respectivo loading
 

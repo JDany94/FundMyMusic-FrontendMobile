@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
   },
   img: {
     borderRadius: 20,
-    width: 180,
-    height: 220,
+    width: 150,
+    height: 190,
   },
   title: {
     color: theme.colors.secondary,
