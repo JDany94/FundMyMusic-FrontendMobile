@@ -3,11 +3,13 @@ import {View, StyleSheet, TextInput, ScrollView} from 'react-native';
 
 import {Button, Dialog, Portal, ActivityIndicator} from 'react-native-paper';
 import CreditCard from 'react-native-credit-card';
+import SweetAlert from 'react-native-sweet-alert';
 
 import BackgroundGray from '../components/BackgroundGray';
 import Title from '../components/Title';
 import BackButton from '../components/BackButton';
 import {theme} from '../core/theme';
+import {validations} from '../helpers/validations';
 
 import useAuth from '../hooks/useAuth';
 
@@ -19,28 +21,59 @@ const AddBalance = ({navigation}) => {
   const [cardCVC, setCardCVC] = useState('');
   const [cardCVCFocus, setCardCVCFocus] = useState(false);
 
-  const [alert, setAlert] = useState(false);
-  const [msgAlert, setMsgAlert] = useState('');
-
+  const {
+    RegExpText,
+    RegExpNumbers,
+    alert,
+    setAlert,
+    msgAlert,
+    setMsgAlert,
+    approved,
+    validate,
+  } = validations();
   const {auth, editProfile, loading} = useAuth();
 
   const handleSubmit = async () => {
-    if (newBalance === '' || parseInt(newBalance) <= 0) {
-      setMsgAlert('Cantidad de saldo no válida');
-      setAlert(true);
+    const user = {
+      _id: auth._id,
+      balance: newBalance,
+      from: 'AddBalance',
+    };
+
+    validate(user);
+
+    if (!approved) {
       return;
     }
-    //TODO validar tarjeta
-    const total = parseInt(auth.balance) + parseInt(newBalance);
-    const JSON = {
-      _id: auth._id,
-      balance: total,
-    };
-    if (await editProfile(JSON)) {
-      // TODO: Notificacion bonita
+
+    user.balance = parseInt(auth.balance) + parseInt(newBalance);
+    const {response, error} = await editProfile(user);
+
+    if (response) {
+      setNewBalance('');
+      setCardName('');
+      setCardNumber('');
+      setCardDate('');
+      setCardCVC('');
+
+      SweetAlert.showAlertWithOptions(
+        {
+          title: 'Saldo agregado con éxito',
+          confirmButtonTitle: 'OK',
+          confirmButtonColor: '#000',
+          style: 'success',
+          cancellable: true,
+        },
+        callback => null,
+      );
+
       navigation.goBack();
     } else {
-      setMsgAlert('Error de conexión');
+      setMsgAlert(
+        error.response.status !== 0
+          ? error.response.data.msg
+          : 'Error de conexión',
+      );
       setAlert(true);
     }
   };
@@ -59,7 +92,9 @@ const AddBalance = ({navigation}) => {
               placeholder="Saldo (€)"
               placeholderTextColor="white"
               value={newBalance}
-              onChangeText={text => setNewBalance(text)}
+              onChangeText={text =>
+                setNewBalance(text.replace(RegExpNumbers, ''))
+              }
               keyboardType="numeric"
             />
           </View>
@@ -82,7 +117,10 @@ const AddBalance = ({navigation}) => {
               placeholder="Numero de la tarjera"
               placeholderTextColor="white"
               value={cardNumber}
-              onChangeText={text => setCardNumber(text)}
+              onChangeText={text =>
+                setCardNumber(text.replace(RegExpNumbers, ''))
+              }
+              maxLength={16}
               keyboardType="numeric"
             />
             <TextInput
@@ -90,14 +128,18 @@ const AddBalance = ({navigation}) => {
               placeholder="Nombre del propietario"
               placeholderTextColor="white"
               value={cardName}
-              onChangeText={text => setCardName(text)}
+              onChangeText={text => setCardName(text.replace(RegExpText, ''))}
+              maxLength={35}
             />
             <TextInput
               style={styles.input}
               placeholder="Fecha de caducidad (MMAA)"
               placeholderTextColor="white"
               value={cardDate}
-              onChangeText={text => setCardDate(text)}
+              onChangeText={text =>
+                setCardDate(text.replace(RegExpNumbers, ''))
+              }
+              maxLength={4}
               keyboardType="numeric"
             />
             <TextInput
@@ -107,7 +149,8 @@ const AddBalance = ({navigation}) => {
               value={cardCVC}
               onBlur={() => setCardCVCFocus(false)}
               onFocus={() => setCardCVCFocus(true)}
-              onChangeText={text => setCardCVC(text)}
+              onChangeText={text => setCardCVC(text.replace(RegExpNumbers, ''))}
+              maxLength={3}
               keyboardType="numeric"
             />
           </View>

@@ -9,13 +9,7 @@ const AuthProvider = ({children}) => {
   const [auth, setAuth] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const validName = val => {
-    return /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u.test(
-      val,
-    );
-  };
-
-  const singIn = async (email, password) => {
+  const singIn = async ({email, password}) => {
     try {
       setLoading(true);
       const {data} = await axiosClient.post(`/user/auth`, {
@@ -26,9 +20,11 @@ const AuthProvider = ({children}) => {
       await AsyncStorage.setItem('Token', data.token);
       setAuth(data);
       setLoading(false);
+      return {response: true};
     } catch (error) {
       console.log(error);
       setLoading(false);
+      return {response: false, error};
     }
   };
 
@@ -39,9 +35,11 @@ const AuthProvider = ({children}) => {
       await AsyncStorage.setItem('Token', data.token);
       setAuth(data);
       setLoading(false);
+      return {response: true};
     } catch (error) {
       console.log(error);
       setLoading(false);
+      return {response: false, error};
     }
   };
 
@@ -77,11 +75,11 @@ const AuthProvider = ({children}) => {
       const {data} = await axiosClient.put(`/user/profile`, user, config);
       setAuth(data);
       setLoading(false);
-      return true;
+      return {response: true};
     } catch (error) {
       console.log(error);
       setLoading(false);
-      return false;
+      return {response: false, error};
     }
   };
 
@@ -103,7 +101,6 @@ const AuthProvider = ({children}) => {
         loadUserData,
         editProfile,
         singOutAuth,
-        validName,
       }}>
       {children}
     </AuthContext.Provider>

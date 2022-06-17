@@ -19,6 +19,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Background from '../components/Background';
 import Logo from '../components/Logo';
 import {useTogglePasswordVisibility} from '../helpers/useTogglePasswordVisibility';
+import {validations} from '../helpers/validations';
 import BackButton from '../components/BackButton';
 import {theme} from '../core/theme';
 
@@ -31,9 +32,9 @@ const SingUp = ({navigation}) => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
-  const [alert, setAlert] = useState(false);
-  const [msgAlert, setMsgAlert] = useState('');
 
+  const {RegExpNumbers, RegExpText, alert, setAlert, msgAlert, setMsgAlert, approved, validate} =
+    validations();
   const {
     passwordVisibility,
     rePasswordVisibility,
@@ -45,29 +46,29 @@ const SingUp = ({navigation}) => {
   const {singUp, loading} = useAuth();
 
   const handleSubmit = async () => {
-    if ([email, name, surname, phone, password, rePassword].includes('')) {
-      setMsgAlert('Todos los campos son obligatorios');
-      setAlert(true);
+    const user = {
+      email,
+      name,
+      surname,
+      phone,
+      password,
+      rePassword,
+      role: 'User',
+      //TODO Hacer Confirmar cuenta
+      confirmed: 'true',
+      token: 'Confirmed',
+      from: 'SingUp',
+    };
+
+    validate(user);
+
+    if (!approved) {
       return;
     }
 
-    // TODO:Validaciones
+    const {response, error} = await singUp(user);
 
-    try {
-      const user = {
-        email,
-        name,
-        surname,
-        phone,
-        password,
-        role: 'User',
-        //TODO sin validar correo
-        confirmed: 'true',
-        token: 'Confirmed',
-      };
-
-      await singUp(user);
-
+    if (response) {
       setEmail('');
       setName('');
       setSurname('');
@@ -76,8 +77,7 @@ const SingUp = ({navigation}) => {
       setRePassword('');
       setMsgAlert('');
       navigation.replace('Dashboard');
-    } catch (error) {
-      console.log(error);
+    } else {
       setMsgAlert(
         error.response.status !== 0
           ? error.response.data.msg
@@ -107,22 +107,22 @@ const SingUp = ({navigation}) => {
               placeholder="Nombre"
               placeholderTextColor="white"
               value={name}
-              onChangeText={text => setName(text)}
+              onChangeText={text => setName(text.replace(RegExpText, ''))}
             />
             <TextInput
               style={styles.input}
               placeholder="Apellidos"
               placeholderTextColor="white"
               value={surname}
-              onChangeText={text => setSurname(text)}
+              onChangeText={text => setSurname(text.replace(RegExpText, ''))}
             />
             <TextInput
               style={styles.input}
               placeholder="Teléfono"
               placeholderTextColor="white"
               value={phone}
-              onChangeText={text => setPhone(text)}
-              keyboardType="phone-pad"
+              onChangeText={text => setPhone(text.replace(RegExpNumbers, ''))}
+              keyboardType="numeric"
             />
             <View style={styles.inputContainerPass}>
               <TextInput

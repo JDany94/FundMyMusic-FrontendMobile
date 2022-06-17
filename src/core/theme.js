@@ -1,4 +1,4 @@
-import { DefaultTheme } from 'react-native-paper'
+import {DefaultTheme} from 'react-native-paper';
 
 export const theme = {
   ...DefaultTheme,
@@ -10,6 +10,6 @@ export const theme = {
     gray: '#6b7280',
     green: '#16A34A',
     background: '#111827',
-    bgBottomBar: '#1f2937'
+    bgBottomBar: '#1f2937',
   },
-}
+};

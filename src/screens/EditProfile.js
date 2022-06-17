@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, TextInput, ScrollView} from 'react-native';
 import {Button, Dialog, Portal, ActivityIndicator} from 'react-native-paper';
+import SweetAlert from 'react-native-sweet-alert';
 
 import BackgroundGray from '../components/BackgroundGray';
 import Title from '../components/Title';
 import BackButton from '../components/BackButton';
+import {validations} from '../helpers/validations';
 import {theme} from '../core/theme';
 
 import useAuth from '../hooks/useAuth';
@@ -14,9 +16,17 @@ const EditProfile = ({navigation}) => {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [phone, setPhone] = useState(0);
-  const [alert, setAlert] = useState(false);
-  const [msgAlert, setMsgAlert] = useState('');
 
+  const {
+    RegExpText,
+    RegExpNumbers,
+    alert,
+    setAlert,
+    msgAlert,
+    setMsgAlert,
+    approved,
+    validate,
+  } = validations();
   const {auth, editProfile, loading} = useAuth();
 
   useEffect(() => {
@@ -27,28 +37,44 @@ const EditProfile = ({navigation}) => {
   }, []);
 
   const handleSubmit = async () => {
-    if ([name, surname].includes('')) {
-      setMsgAlert('Todos los campos son obligatorios');
-      setAlert(true);
-      return;
-    }
-
-    // TODO:Validaciones y Notificacion bonita
-
-    const JSON = {
+    const user = {
       _id: auth._id,
       name,
       surname,
       phone,
+      from: 'EditProfile',
     };
-    if (await editProfile(JSON)) {
+
+    validate(user);
+
+    if (!approved) {
+      return;
+    }
+
+    const {response, error} = await editProfile(user);
+
+    if (response) {
       setEmail('');
       setName('');
       setSurname('');
       setPhone(0);
+      SweetAlert.showAlertWithOptions(
+        {
+          title: 'Perfil actualizado con éxito',
+          confirmButtonTitle: 'OK',
+          confirmButtonColor: '#000',
+          style: 'success',
+          cancellable: true,
+        },
+        callback => null,
+      );
       navigation.goBack();
     } else {
-      setMsgAlert('Error de conexión');
+      setMsgAlert(
+        error.response.status !== 0
+          ? error.response.data.msg
+          : 'Error de conexión',
+      );
       setAlert(true);
     }
   };
@@ -76,21 +102,21 @@ const EditProfile = ({navigation}) => {
               placeholder="Nombre"
               placeholderTextColor="white"
               value={name}
-              onChangeText={text => setName(text)}
+              onChangeText={text => setName(text.replace(RegExpText, ''))}
             />
             <TextInput
               style={styles.input}
               placeholder="Apellidos"
               placeholderTextColor="white"
               value={surname}
-              onChangeText={text => setSurname(text)}
+              onChangeText={text => setSurname(text.replace(RegExpText, ''))}
             />
             <TextInput
               style={styles.input}
               placeholder="Teléfono"
               placeholderTextColor="white"
               value={phone.toString()}
-              onChangeText={text => setPhone(text)}
+              onChangeText={text => setPhone(text.replace(RegExpNumbers, ''))}
               keyboardType="phone-pad"
             />
           </View>

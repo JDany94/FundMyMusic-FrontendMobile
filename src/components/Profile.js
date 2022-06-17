@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, ScrollView} from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
+import {StyleSheet, View, ScrollView, RefreshControl} from 'react-native';
 import {Button, Text, ActivityIndicator} from 'react-native-paper';
 
 import Title from '../components/Title';
@@ -14,8 +14,9 @@ const Profile = ({navigation}) => {
   const [surname, setSurname] = useState('');
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
-  const {auth, loading, singOutAuth} = useAuth();
+  const {auth, loading, loadUserData, singOutAuth} = useAuth();
   const {singOutConcerts} = useConcerts();
 
   useEffect(() => {
@@ -27,6 +28,11 @@ const Profile = ({navigation}) => {
     setRole(auth.role);
   }, [auth]);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    loadUserData();
+    setRefreshing(false);
+  }, []);
   const handleClose = async () => {
     singOutConcerts();
     await singOutAuth();
@@ -41,7 +47,11 @@ const Profile = ({navigation}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: theme.colors.background}}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <Title>Saldo</Title>
           <Title style={styles.euros}>{balance} €</Title>
@@ -73,7 +83,6 @@ const Profile = ({navigation}) => {
             onPress={handleEdit}>
             Editar perfil
           </Button>
-          {loading ? <ActivityIndicator animating={true} /> : null}
           <Button
             style={styles.button}
             icon="logout"
@@ -81,6 +90,7 @@ const Profile = ({navigation}) => {
             onPress={handleClose}>
             Cerrar Sesión
           </Button>
+          {loading ? <ActivityIndicator animating={true} /> : null}
 
           <View style={{marginBottom: 60}} />
         </View>

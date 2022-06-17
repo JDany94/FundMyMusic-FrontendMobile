@@ -18,37 +18,43 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Background from '../components/Background';
 import Logo from '../components/Logo';
 import {useTogglePasswordVisibility} from '../helpers/useTogglePasswordVisibility';
+import {validations} from '../helpers/validations';
 import {theme} from '../core/theme';
 
 import useAuth from '../hooks/useAuth';
 
 const SingIn = ({navigation}) => {
+  let forgot = false; // TODO Hacer Olvidar contraseña
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [alert, setAlert] = useState(false);
-  const [msgAlert, setMsgAlert] = useState('');
 
   const {passwordVisibility, rightIcon, handlePasswordVisibility} =
     useTogglePasswordVisibility();
+  const {alert, setAlert, msgAlert, setMsgAlert, approved, validate} =
+    validations();
   const {singIn, loading} = useAuth();
 
   const handleSubmit = async () => {
-    if ((email || password) === '') {
-      setMsgAlert('Todos los campos son obligatorios');
-      setAlert(true);
+    const user = {
+      email,
+      password,
+      from: 'SingIn',
+    };
+
+    validate(user);
+
+    if (!approved) {
       return;
     }
-    // TODO:Validaciones
 
-    try {
-      await singIn(email, password);
+    const {response, error} = await singIn(user);
 
+    if (response) {
       setEmail('');
       setPassword('');
       setMsgAlert('');
       navigation.replace('Dashboard');
-    } catch (error) {
-      console.log(error);
+    } else {
       setMsgAlert(
         error.response.status !== 0
           ? error.response.data.msg
@@ -94,11 +100,13 @@ const SingIn = ({navigation}) => {
           </View>
         </View>
         {loading && <ActivityIndicator animating={true} />}
-        <View style={styles.forgotPassword}>
-          <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')}>
-            <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
-          </TouchableOpacity>
-        </View>
+        {forgot && (
+          <View style={styles.forgotPassword}>
+            <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')}>
+              <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <Button style={styles.button} mode="contained" onPress={handleSubmit}>
           Iniciar sesión
         </Button>

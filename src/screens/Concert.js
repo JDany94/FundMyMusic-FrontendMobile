@@ -14,6 +14,7 @@ import {
   Portal,
   Paragraph,
 } from 'react-native-paper';
+import SweetAlert from 'react-native-sweet-alert';
 
 import Title from '../components/Title';
 import BackButton from '../components/BackButton';
@@ -49,18 +50,23 @@ const Concert = ({navigation}) => {
 
   const handleBuy = async () => {
     if (await buyTickets(concert, numberTickets)) {
+      SweetAlert.showAlertWithOptions(
+        {
+          title: 'Compra realizada con éxito',
+          subTitle: 'En el apartado de boletos tienes tus entradas',
+          confirmButtonTitle: 'OK',
+          confirmButtonColor: '#000',
+          style: 'success',
+          cancellable: true,
+        },
+        callback => null,
+      );
       getConcerts();
-      setMsgAlert('Compra realizada con exito!');
-      setAlert(true);
+      navigation.replace('Dashboard');
     } else {
       setMsgAlert('Saldo insuficiente');
       setAlert(true);
     }
-  };
-
-  const handleAlert = async () => {
-    setAlert(false);
-    navigation.replace('Dashboard');
   };
 
   const handleSum = () => {
@@ -178,15 +184,8 @@ const Concert = ({navigation}) => {
           visible={alert}
           onDismiss={() => setAlert(false)}>
           <Dialog.Title>{msgAlert}</Dialog.Title>
-          {msgAlert === 'Compra realizada con exito!' ? (
-            <Dialog.Content>
-              <Paragraph>
-                En el apartado de boletos tienes tus entradas
-              </Paragraph>
-            </Dialog.Content>
-          ) : null}
           <Dialog.Actions>
-            <Button onPress={handleAlert}>OK</Button>
+            <Button onPress={() => setAlert(false)}>OK</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

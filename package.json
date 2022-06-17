@@ -27,6 +27,7 @@
     "react-native-screens": "^3.13.1",
     "react-native-status-bar-height": "^2.6.0",
     "react-native-svg": "^12.3.0",
+    "react-native-sweet-alert": "^3.5.0",
     "react-native-vector-icons": "^9.1.0"
   },
   "devDependencies": {
