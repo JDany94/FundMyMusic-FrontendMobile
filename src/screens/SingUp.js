@@ -33,8 +33,15 @@ const SingUp = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
 
-  const {RegExpNumbers, RegExpText, alert, setAlert, msgAlert, setMsgAlert, approved, validate} =
-    validations();
+  const {
+    RegExpNumbers,
+    RegExpText,
+    alert,
+    setAlert,
+    msgAlert,
+    setMsgAlert,
+    validate,
+  } = validations();
   const {
     passwordVisibility,
     rePasswordVisibility,
@@ -60,9 +67,7 @@ const SingUp = ({navigation}) => {
       from: 'SingUp',
     };
 
-    validate(user);
-
-    if (!approved) {
+    if (!validate(user)) {
       return;
     }
 

@@ -28,7 +28,6 @@ const AddBalance = ({navigation}) => {
     setAlert,
     msgAlert,
     setMsgAlert,
-    approved,
     validate,
   } = validations();
   const {auth, editProfile, loading} = useAuth();
@@ -40,9 +39,7 @@ const AddBalance = ({navigation}) => {
       from: 'AddBalance',
     };
 
-    validate(user);
-
-    if (!approved) {
+    if (!validate(user)) {
       return;
     }
 
@@ -77,7 +74,7 @@ const AddBalance = ({navigation}) => {
       setAlert(true);
     }
   };
-
+  //TODO: validar mes y año
   return (
     <BackgroundGray>
       <ScrollView showsVerticalScrollIndicator={false}>

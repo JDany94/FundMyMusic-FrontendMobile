@@ -30,8 +30,7 @@ const SingIn = ({navigation}) => {
 
   const {passwordVisibility, rightIcon, handlePasswordVisibility} =
     useTogglePasswordVisibility();
-  const {alert, setAlert, msgAlert, setMsgAlert, approved, validate} =
-    validations();
+  const {alert, setAlert, msgAlert, setMsgAlert, validate} = validations();
   const {singIn, loading} = useAuth();
 
   const handleSubmit = async () => {
@@ -41,9 +40,7 @@ const SingIn = ({navigation}) => {
       from: 'SingIn',
     };
 
-    validate(user);
-
-    if (!approved) {
+    if (!validate(user)) {
       return;
     }
 

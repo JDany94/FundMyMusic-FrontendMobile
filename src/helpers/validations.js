@@ -3,10 +3,8 @@ import {useState} from 'react';
 export const validations = () => {
   const [alert, setAlert] = useState(false);
   const [msgAlert, setMsgAlert] = useState('');
-  const [approved, setApproved] = useState(false);
 
   const validate = user => {
-    setApproved(false);
     setMsgAlert('');
 
     if (user.from === 'SingIn') {
@@ -15,14 +13,14 @@ export const validations = () => {
       if ([email, password].includes('')) {
         setMsgAlert('Todos los campos son obligatorios');
         setAlert(true);
-        return;
+        return false;
       }
       if (!validEmail(email)) {
         setMsgAlert('Email no válido');
         setAlert(true);
-        return;
+        return false;
       }
-      setApproved(true);
+      return true;
     }
 
     if (user.from === 'SingUp') {
@@ -31,44 +29,44 @@ export const validations = () => {
       if ([email, name, surname, phone, password, rePassword].includes('')) {
         setMsgAlert('Todos los campos son obligatorios');
         setAlert(true);
-        return;
+        return false;
       }
       if (!validEmail(email)) {
         setMsgAlert('Email no válido');
         setAlert(true);
-        return;
+        return false;
       }
       if (!validName(name)) {
         setMsgAlert('Nombre no válido');
         setAlert(true);
-        return;
+        return false;
       }
       if (!validName(surname)) {
         setMsgAlert('Apellido no válido');
         setAlert(true);
-        return;
+        return false;
       }
       if (phone.length < 9) {
         setMsgAlert('El teléfono debe tener mas de 9 dígitos');
         setAlert(true);
-        return;
+        return false;
       }
       if (!validNumber(phone)) {
         setMsgAlert('Teléfono no válido');
         setAlert(true);
-        return;
+        return false;
       }
       if (password.length < 6) {
         setMsgAlert('La contraseña debe tener al menos 6 caracteres');
         setAlert(true);
-        return;
+        return false;
       }
       if (password !== rePassword) {
         setMsgAlert('Las contraseñas no coinciden');
         setAlert(true);
-        return;
+        return false;
       }
-      setApproved(true);
+      return true;
     }
 
     if (user.from === 'EditProfile') {
@@ -77,29 +75,29 @@ export const validations = () => {
       if ([name, surname, phone].includes('')) {
         setMsgAlert('Todos los campos son obligatorios');
         setAlert(true);
-        return;
+        return false;
       }
       if (!validName(name)) {
         setMsgAlert('Nombre no válido');
         setAlert(true);
-        return;
+        return false;
       }
       if (!validName(surname)) {
         setMsgAlert('Apellido no válido');
         setAlert(true);
-        return;
+        return false;
       }
       if (phone.length < 9) {
         setMsgAlert('El teléfono debe tener mas de 9 dígitos');
         setAlert(true);
-        return;
+        return false;
       }
       if (!validNumber(phone)) {
         setMsgAlert('Teléfono no válido');
         setAlert(true);
-        return;
+        return false;
       }
-      setApproved(true);
+      return true;
     }
 
     if (user.from === 'AddBalance') {
@@ -108,24 +106,24 @@ export const validations = () => {
       if ([balance].includes('')) {
         setMsgAlert('Saldo no válido');
         setAlert(true);
-        return;
+        return false;
       }
       if (parseInt(balance) <= 0) {
         setMsgAlert('El saldo no puede ser negativo');
         setAlert(true);
-        return;
+        return false;
       }
       if (parseInt(balance) > 5000) {
         setMsgAlert('No se puede recargar mas de 5000€ por recarga');
         setAlert(true);
-        return;
+        return false;
       }
       if (!validNumber(balance)) {
         setMsgAlert('Saldo no válido');
         setAlert(true);
-        return;
+        return false;
       }
-      setApproved(true);
+      return true;
     }
   };
 
@@ -150,7 +148,6 @@ export const validations = () => {
     setAlert,
     msgAlert,
     setMsgAlert,
-    approved,
     validate,
     RegExpText,
     RegExpNumbers,

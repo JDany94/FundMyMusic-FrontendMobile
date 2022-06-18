@@ -24,7 +24,6 @@ const EditProfile = ({navigation}) => {
     setAlert,
     msgAlert,
     setMsgAlert,
-    approved,
     validate,
   } = validations();
   const {auth, editProfile, loading} = useAuth();
@@ -45,9 +44,7 @@ const EditProfile = ({navigation}) => {
       from: 'EditProfile',
     };
 
-    validate(user);
-
-    if (!approved) {
+    if (!validate(user)) {
       return;
     }
 
