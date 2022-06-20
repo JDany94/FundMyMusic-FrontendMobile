@@ -1,21 +1,52 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, TextInput} from 'react-native';
-import {Button} from 'react-native-paper';
+import {Button, Dialog, Portal, ActivityIndicator} from 'react-native-paper';
 
 import Background from '../components/Background';
 import BackButton from '../components/BackButton';
 import Logo from '../components/Logo';
 import Title from '../components/Title';
 
+import {validations} from '../helpers/validations';
+import useAuth from '../hooks/useAuth';
+import {theme} from '../core/theme';
+
 const ForgotPass = ({navigation}) => {
   const [email, setEmail] = useState('');
 
-  const handleSubmit = () => {
-    if (email === '') {
-      //validar
+  const {alert, setAlert, msgAlert, setMsgAlert, validate} = validations();
+  const {forgotPassword, loading} = useAuth();
+
+  const handleSubmit = async () => {
+    const user = {
+      email,
+      from: 'ForgotPass',
+    };
+
+    if (!validate(user)) {
       return;
     }
-    navigation.navigate('SingIn');
+
+    const {response, error, msg} = await forgotPassword(user);
+    if (response) {
+      setEmail('');
+      setMsgAlert(msg);
+      setAlert(true);
+    } else {
+      setMsgAlert(
+        error.response.status !== 0
+          ? error.response.data.msg
+          : 'Error de conexión',
+      );
+      setAlert(true);
+    }
+  };
+
+  const handleAlert = () => {
+    setAlert(false);
+    if (msgAlert === 'Hemos enviado un email con las instrucciones') {
+      navigation.navigate('SingIn');
+    }
   };
 
   return (
@@ -34,10 +65,22 @@ const ForgotPass = ({navigation}) => {
             keyboardType="email-address"
           />
         </View>
+        {loading && <ActivityIndicator animating={true} />}
         <Button mode="contained" onPress={handleSubmit} style={styles.button}>
           Enviar Correo
         </Button>
       </View>
+      <Portal>
+        <Dialog
+          style={{backgroundColor: theme.colors.background}}
+          visible={alert}
+          onDismiss={() => setAlert(false)}>
+          <Dialog.Title>{msgAlert}</Dialog.Title>
+          <Dialog.Actions>
+            <Button onPress={() => handleAlert()}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </Background>
   );
 };

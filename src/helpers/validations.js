@@ -125,6 +125,22 @@ export const validations = () => {
       }
       return true;
     }
+
+    if (user.from === 'ForgotPass') {
+      const {email} = user;
+
+      if ([email].includes('')) {
+        setMsgAlert('Todos los campos son obligatorios');
+        setAlert(true);
+        return false;
+      }
+      if (!validEmail(email)) {
+        setMsgAlert('Email no válido');
+        setAlert(true);
+        return false;
+      }
+      return true;
+    }
   };
 
   const RegExpNumbers = /[^0-9]/g;

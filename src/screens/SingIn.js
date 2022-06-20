@@ -24,7 +24,6 @@ import {theme} from '../core/theme';
 import useAuth from '../hooks/useAuth';
 
 const SingIn = ({navigation}) => {
-  let forgot = false; // TODO Hacer Olvidar contraseña
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -97,13 +96,11 @@ const SingIn = ({navigation}) => {
           </View>
         </View>
         {loading && <ActivityIndicator animating={true} />}
-        {forgot && (
-          <View style={styles.forgotPassword}>
-            <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')}>
-              <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <View style={styles.forgotPassword}>
+          <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')}>
+            <Text style={styles.text}>¿Olvidaste tu contraseña?</Text>
+          </TouchableOpacity>
+        </View>
         <Button style={styles.button} mode="contained" onPress={handleSubmit}>
           Iniciar sesión
         </Button>

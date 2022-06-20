@@ -83,6 +83,20 @@ const AuthProvider = ({children}) => {
     }
   };
 
+  const forgotPassword = async user => {
+    try {
+      const {email} = user;
+      setLoading(true);
+      const {data} = await axiosClient.post(`/user/reset-password`, {email});
+      setLoading(false);
+      return {response: true, msg: data.msg};
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      return {response: false, error};
+    }
+  };
+
   const singOutAuth = async () => {
     setLoading(true);
     await AsyncStorage.clear();
@@ -100,6 +114,7 @@ const AuthProvider = ({children}) => {
         singUp,
         loadUserData,
         editProfile,
+        forgotPassword,
         singOutAuth,
       }}>
       {children}
