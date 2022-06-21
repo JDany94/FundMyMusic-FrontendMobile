@@ -61,8 +61,6 @@ const SingUp = ({navigation}) => {
       password,
       rePassword,
       role: 'User',
-      confirmed: 'true',
-      token: 'Confirmed',
       from: 'SingUp',
     };
 
