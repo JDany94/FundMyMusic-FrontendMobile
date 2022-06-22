@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: work around permission issue
-        run: git config --global --add safe.directory /__w/FundMyMusic-FrontendMobile/FundMyMusic-FrontendMobile
+        run: git config --global --add safe.directory /github/workspace 
 
       - name: Check out Git repository # clone the repo to local ci workspace
         uses: actions/checkout@v2
