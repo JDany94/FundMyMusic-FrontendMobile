@@ -22,7 +22,6 @@ jobs:
       - name: Build Android Release
         run: |
           cd android 
-          keytool -genkey -v -keystore fundmymusic.keystore -alias FundMyMusic -keyalg RSA -keysize 2048 -validity 10000
           chmod +x ./gradlew
           ./gradlew assembleRelease
       - name: Upload Artifact
