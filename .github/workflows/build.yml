@@ -55,7 +55,7 @@ jobs:
           cd android && ./gradlew assembleRelease --no-daemon
 
       - name: work around permission issue
-        run: git config --global --add safe.directory /__w/FundMyMusic-FrontendMobile/FundMyMusic-FrontendMobile
+        run: git config --global --add safe.directory /github/workspace
 
       ## Distribute app to Firebase App Distribution
       - name: upload artifact to Firebase App Distribution
