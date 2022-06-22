@@ -77,12 +77,12 @@ const Concerts = ({navigation}) => {
             return acc;
           }, []);
 
-  const sevenDays = concert => {
+  const threeMonths = concert => {
     const concertDate = new Date(concert.date.split('T')[0]);
     const today = new Date();
-    const seven = new Date();
-    seven.setDate(seven.getDate() + 7);
-    if (concertDate < seven && concertDate > today) return true;
+    const three = new Date();
+    three.setDate(three.getDate() + 90);
+    if (concertDate < three && concertDate > today) return true;
     return false;
   };
 
@@ -155,11 +155,11 @@ const Concerts = ({navigation}) => {
           </ScrollView>
 
           <Title style={styles.title}>Próximamente</Title>
-          <View style={styles.sevenDays}>
+          <View style={styles.threeMonths}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {concerts.length ? (
                 concerts.map(concert =>
-                  sevenDays(concert) ? (
+                  threeMonths(concert) ? (
                     <PreviewConcert
                       key={concert._id}
                       concert={concert}
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginVertical: 12,
   },
-  sevenDays: {
+  threeMonths: {
     backgroundColor: 'rgba(153, 27, 27, 0.1)',
   },
   title: {

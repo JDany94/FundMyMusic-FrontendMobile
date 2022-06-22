@@ -6,7 +6,7 @@ import axiosClient from '../config/axiosClient';
 const AuthContext = createContext();
 
 const AuthProvider = ({children}) => {
-  const [auth, setAuth] = useState({});
+  const [auth, setAuth] = useState({name: 'null'});
   const [loading, setLoading] = useState(false);
 
   const singIn = async ({email, password}) => {
@@ -100,7 +100,7 @@ const AuthProvider = ({children}) => {
   const singOutAuth = async () => {
     setLoading(true);
     await AsyncStorage.clear();
-    setAuth({});
+    setAuth({name: 'null'});
     setLoading(false);
   };
 

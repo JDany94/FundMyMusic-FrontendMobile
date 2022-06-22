@@ -16,7 +16,7 @@ import {
 } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import Background from '../components/Background';
+import BackgroundGray from '../components/BackgroundGray';
 import Logo from '../components/Logo';
 import {useTogglePasswordVisibility} from '../helpers/useTogglePasswordVisibility';
 import {validations} from '../helpers/validations';
@@ -90,7 +90,7 @@ const SingUp = ({navigation}) => {
   };
 
   return (
-    <Background>
+    <BackgroundGray>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <BackButton navigation={navigation} />
@@ -192,7 +192,7 @@ const SingUp = ({navigation}) => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-    </Background>
+    </BackgroundGray>
   );
 };
 

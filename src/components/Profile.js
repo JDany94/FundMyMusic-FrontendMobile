@@ -17,7 +17,6 @@ const Profile = ({navigation}) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const {auth, loading, loadUserData, singOutAuth} = useAuth();
-  const {singOutConcerts} = useConcerts();
 
   useEffect(() => {
     setEmail(auth.email);
@@ -33,10 +32,9 @@ const Profile = ({navigation}) => {
     loadUserData();
     setRefreshing(false);
   }, []);
-  const handleClose = async () => {
-    singOutConcerts();
-    await singOutAuth();
-    navigation.replace('SingIn');
+  const handleClose = () => {
+    singOutAuth();
+    navigation.replace('Dashboard');
   };
   const handleEdit = async () => {
     navigation.navigate('EditProfile');
@@ -44,57 +42,82 @@ const Profile = ({navigation}) => {
   const handleAddBalance = async () => {
     navigation.navigate('AddBalance');
   };
+  const handleSingIn = () => {
+    navigation.navigate('SingIn');
+  };
+  const handleSingUp = () => {
+    navigation.navigate('SingUp');
+  };
 
   return (
     <View style={{flex: 1, backgroundColor: theme.colors.background}}>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
-          <Title>Saldo</Title>
-          <Title style={styles.euros}>{balance} €</Title>
-          <Button
-            style={styles.button}
-            icon="cash-multiple"
-            mode="contained"
-            onPress={handleAddBalance}>
-            Agregar saldo
-          </Button>
-          <View style={styles.containerProfile}>
-            <Title style={styles.titleView}>Email</Title>
-            <Text style={styles.textView}>{email}</Text>
-            <Title style={styles.titleView}>Nombre y apellidos</Title>
-            <Text style={styles.textView}>
-              {name} {surname}
-            </Text>
-            <Title style={styles.titleView}>Phone</Title>
-            <Text style={styles.textView}>{phone}</Text>
-            <Title style={styles.titleView}>Tipo de perfil</Title>
-            <Text style={styles.textView}>
-              {role === 'User' ? 'Usuario' : null}
-            </Text>
+      {auth.name !== 'null' ? (
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          showsVerticalScrollIndicator={false}>
+          <View style={styles.container}>
+            <Title>Saldo</Title>
+            <Title style={styles.euros}>{balance} €</Title>
+            <Button
+              style={styles.button}
+              icon="cash-multiple"
+              mode="contained"
+              onPress={handleAddBalance}>
+              Agregar saldo
+            </Button>
+            <View style={styles.containerProfile}>
+              <Title style={styles.titleView}>Email</Title>
+              <Text style={styles.textView}>{email}</Text>
+              <Title style={styles.titleView}>Nombre y apellidos</Title>
+              <Text style={styles.textView}>
+                {name} {surname}
+              </Text>
+              <Title style={styles.titleView}>Phone</Title>
+              <Text style={styles.textView}>{phone}</Text>
+              <Title style={styles.titleView}>Tipo de perfil</Title>
+              <Text style={styles.textView}>
+                {role === 'User' ? 'Usuario' : null}
+              </Text>
+            </View>
+            <Button
+              style={styles.button}
+              icon="pencil"
+              mode="contained"
+              onPress={handleEdit}>
+              Editar perfil
+            </Button>
+            {loading ? <ActivityIndicator animating={true} /> : null}
+            <Button
+              style={styles.button}
+              icon="logout"
+              mode="contained"
+              onPress={handleClose}>
+              Cerrar Sesión
+            </Button>
+            <View style={{marginBottom: 60}} />
           </View>
+        </ScrollView>
+      ) : (
+        <View style={styles.containerNoLog}>
+          <Text style={styles.textGrayNoLog}>
+            Debes iniciar sesión o registrarte para ver tu perfil...
+          </Text>
           <Button
-            style={styles.button}
-            icon="pencil"
+            style={styles.buttonNoLog}
             mode="contained"
-            onPress={handleEdit}>
-            Editar perfil
+            onPress={handleSingIn}>
+            Iniciar Sesión
           </Button>
           <Button
-            style={styles.button}
-            icon="logout"
+            style={styles.buttonNoLog}
             mode="contained"
-            onPress={handleClose}>
-            Cerrar Sesión
+            onPress={handleSingUp}>
+            Registrarse
           </Button>
-          {loading ? <ActivityIndicator animating={true} /> : null}
-
-          <View style={{marginBottom: 60}} />
         </View>
-      </ScrollView>
+      )}
     </View>
   );
 };
@@ -135,6 +158,28 @@ const styles = StyleSheet.create({
   },
   textView: {
     color: theme.colors.gray,
+  },
+  containerNoLog: {
+    flex: 1,
+    padding: 20,
+    width: '100%',
+    alignSelf: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.colors.background,
+  },
+  textGrayNoLog: {
+    fontSize: 17,
+    textAlign: 'justify',
+    width: '100%',
+    marginVertical: 6,
+    fontWeight: 'bold',
+    color: theme.colors.gray,
+  },
+  buttonNoLog: {
+    borderRadius: 25,
+    width: '100%',
+    marginVertical: 10,
+    paddingVertical: 2,
   },
 });
 

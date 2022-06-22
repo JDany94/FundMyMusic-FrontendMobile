@@ -15,16 +15,7 @@ const ConcertsProvider = ({children}) => {
 
   const getConcerts = async () => {
     try {
-      const token = await AsyncStorage.getItem('Token');
-      if (!token || !auth) return;
-
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const {data} = await axiosClient.get('/concerts', config);
+      const {data} = await axiosClient.get('/concerts');
       setConcerts(data);
     } catch (error) {
       console.log(error);
@@ -33,16 +24,8 @@ const ConcertsProvider = ({children}) => {
 
   const getConcert = async id => {
     try {
-      setLoading(true);
-      const token = await AsyncStorage.getItem('Token');
-      if (!token || !auth) return;
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const {data} = await axiosClient.get(`/concerts/${id}`, config);
+      setLoading(true);      
+      const {data} = await axiosClient.get(`/concerts/${id}`);
       setConcert(data);
       setLoading(false);
     } catch (error) {

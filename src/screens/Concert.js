@@ -12,7 +12,6 @@ import {
   Button,
   Dialog,
   Portal,
-  Paragraph,
 } from 'react-native-paper';
 import SweetAlert from 'react-native-sweet-alert';
 
@@ -22,6 +21,7 @@ import FavButton from '../components/FavButton';
 import BackgroundGray from '../components/BackgroundGray';
 import {theme} from '../core/theme';
 
+import useAuth from '../hooks/useAuth';
 import useConcerts from '../hooks/useConcerts';
 
 const Concert = ({navigation}) => {
@@ -31,6 +31,7 @@ const Concert = ({navigation}) => {
   const [numberTickets, setNumberTickets] = useState(1);
 
   const {concert, loading, loadBuy, buyTickets, getConcerts} = useConcerts();
+  const {auth} = useAuth();
 
   const {
     FlyerURL,
@@ -77,6 +78,12 @@ const Concert = ({navigation}) => {
   const handleRest = () => {
     numberTickets > 1 ? setNumberTickets(numberTickets - 1) : null;
   };
+  const handleSingIn = () => {
+    navigation.navigate('SingIn');
+  };
+  const handleSingUp = () => {
+    navigation.navigate('SingUp');
+  };
 
   return (
     <BackgroundGray>
@@ -89,7 +96,9 @@ const Concert = ({navigation}) => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
             <BackButton navigation={navigation} />
-            <FavButton navigation={navigation} />
+            {auth.name !== 'null' ? (
+              <FavButton navigation={navigation} />
+            ) : null}
             <Image
               style={styles.img}
               source={{
@@ -149,32 +158,54 @@ const Concert = ({navigation}) => {
               Entradas disponibles:{' '}
               <Text style={styles.textNumbers}>{capacity - sold}</Text>
             </Text>
-
-            {!soldOut && (
-              <>
-                <View style={styles.counter}>
-                  <TouchableOpacity
-                    onPress={handleRest}
-                    style={styles.buttonCounter}>
-                    <Text style={styles.textCounter}>-</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.textCounter}>{numberTickets}</Text>
-                  <TouchableOpacity
-                    onPress={handleSum}
-                    style={styles.buttonCounter}>
-                    <Text style={styles.textCounter}>+</Text>
-                  </TouchableOpacity>
-                </View>
-                {loadBuy && <ActivityIndicator animating={true} />}
-                <Button
-                  style={styles.button}
-                  icon="ticket-confirmation-outline"
-                  mode="contained"
-                  onPress={handleBuy}>
-                  Comprar entrada ({price * numberTickets}€)
-                </Button>
-              </>
-            )}
+            <Text style={styles.textGray}>
+              Precio: <Text style={styles.textNumbers}>{price} €</Text>
+            </Text>
+            {!soldOut &&
+              (auth.name !== 'null' ? (
+                <>
+                  <View style={styles.counter}>
+                    <TouchableOpacity
+                      onPress={handleRest}
+                      style={styles.buttonCounter}>
+                      <Text style={styles.textCounter}>-</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.textCounter}>{numberTickets}</Text>
+                    <TouchableOpacity
+                      onPress={handleSum}
+                      style={styles.buttonCounter}>
+                      <Text style={styles.textCounter}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                  {loadBuy && <ActivityIndicator animating={true} />}
+                  <Button
+                    style={styles.button}
+                    icon="ticket-confirmation-outline"
+                    mode="contained"
+                    onPress={handleBuy}>
+                    Comprar entrada ({price * numberTickets}€)
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <View style={styles.separator} />
+                  <Text style={styles.textGrayNoLog}>
+                    Debes iniciar sesión o registrarte para comprar boletos...
+                  </Text>
+                  <Button
+                    style={styles.button}
+                    mode="contained"
+                    onPress={handleSingIn}>
+                    Iniciar Sesión
+                  </Button>
+                  <Button
+                    style={styles.button}
+                    mode="contained"
+                    onPress={handleSingUp}>
+                    Registrarse
+                  </Button>
+                </>
+              ))}
           </View>
         </ScrollView>
       )}
@@ -246,6 +277,14 @@ const styles = StyleSheet.create({
   textGray: {
     fontSize: 18,
     textAlign: 'justify',
+    marginVertical: 6,
+    fontWeight: 'bold',
+    color: theme.colors.gray,
+  },
+  textGrayNoLog: {
+    fontSize: 17,
+    textAlign: 'justify',
+    width: '100%',
     marginVertical: 6,
     fontWeight: 'bold',
     color: theme.colors.gray,

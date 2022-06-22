@@ -15,11 +15,12 @@ import {
 } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import Background from '../components/Background';
+import BackgroundGray from '../components/BackgroundGray';
 import Logo from '../components/Logo';
 import {useTogglePasswordVisibility} from '../helpers/useTogglePasswordVisibility';
 import {validations} from '../helpers/validations';
 import {theme} from '../core/theme';
+import BackButton from '../components/BackButton';
 
 import useAuth from '../hooks/useAuth';
 
@@ -61,8 +62,9 @@ const SingIn = ({navigation}) => {
   };
 
   return (
-    <Background>
+    <BackgroundGray>
       <View style={styles.container}>
+        <BackButton navigation={navigation} />
         <Logo />
         <View style={styles.inputs}>
           <TextInput
@@ -122,7 +124,7 @@ const SingIn = ({navigation}) => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-    </Background>
+    </BackgroundGray>
   );
 };
 
