@@ -228,9 +228,6 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-           
-        }
     }
     buildTypes {
         debug {
