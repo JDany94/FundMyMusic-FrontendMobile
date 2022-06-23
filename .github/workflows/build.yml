@@ -4,30 +4,12 @@ on:
     branches:
       - main
 jobs:
-  install:
+  deployment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install npm dependencies
-        run: |
-          npm install
-  build-android:
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install npm dependencies
-        run: |
-          npm install
-      - name: Build Android Release
-        run: |
-          cd android 
-          chmod +x ./gradlew
-          ./gradlew assembleRelease
-      - name: Deploy APK
-        uses: fjogeleit/http-request-action@v1
-        with:
-          url: 'https://fundmymusic-backend.herokuapp.com/api/files/apk'
-          method: 'POST'
-          customHeaders: '{"Content-Type": "multipart/form-data"}'
-          files: android/app/build/outputs/apk/release/app-release.apk
+    - name: Deploy Stage
+      uses: fjogeleit/http-request-action@v1
+      with:
+        url: 'https://fundmymusic-backend.herokuapp.com/api/concerts'
+        method: 'GET'
+        
