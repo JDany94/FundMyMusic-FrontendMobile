@@ -1,4 +1,4 @@
-package com.mobile;
+package es.android.fundmymusic;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
